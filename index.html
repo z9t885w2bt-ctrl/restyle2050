@@ -6,15 +6,12 @@
 <title>不完美也沒關係 × Restyle 2050</title>
 <meta name="description" content="Restyle 2050 × 咖啡廳聯名活動：掃碼累積里程，抽獎不完美整新品電器">
 
-<!-- Supabase JS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-/* ─── RESET & TOKENS ─── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --cream: #F5F0E8;
@@ -44,7 +41,6 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; }
 input, button { font-family: inherit; }
 
-/* ─── NAV ─── */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -90,12 +86,10 @@ nav {
 }
 .nav-miles { color: var(--toast); font-size: 13px; font-family: 'DM Serif Display', serif; }
 
-/* ─── PAGE SYSTEM ─── */
 .page { display: none; padding-top: 60px; min-height: 100vh; }
 .page.active { display: block; animation: fadeUp .35s ease; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-/* ─── MODAL ─── */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 2000;
   background: rgba(10,8,7,0.88);
@@ -130,7 +124,6 @@ nav {
 }
 .modal p { font-family: 'Noto Serif TC', serif; font-size: 13px; color: var(--muted); line-height: 1.9; margin-bottom: 1.5rem; }
 
-/* ─── FORM ─── */
 .form-group { margin-bottom: 1rem; }
 .form-label { display: block; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 6px; }
 .form-input {
@@ -145,15 +138,6 @@ nav {
 }
 .form-input:focus { border-color: var(--toast); }
 .form-input::placeholder { color: rgba(212,196,168,0.3); }
-.otp-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-.btn-send-otp {
-  background: none; border: 0.5px solid rgba(212,196,168,0.3);
-  color: var(--sand); font-size: 10px; letter-spacing: 0.15em;
-  padding: 0 14px; white-space: nowrap;
-  transition: all .2s;
-}
-.btn-send-otp:hover { border-color: var(--toast); color: var(--toast); }
-.btn-send-otp:disabled { opacity: .4; pointer-events: none; }
 
 .btn-primary {
   display: block; width: 100%;
@@ -174,8 +158,8 @@ nav {
 .btn-ghost-sm:hover { color: var(--cream); border-color: var(--sand); }
 .form-error { font-size: 10px; color: #E07070; margin-top: 6px; letter-spacing: 0.1em; }
 .form-success { font-size: 10px; color: #6BA882; margin-top: 6px; letter-spacing: 0.1em; }
+.form-help { font-size: 10px; color: var(--muted); margin-top: 6px; letter-spacing: 0.06em; }
 
-/* ─── TOAST ─── */
 .toast {
   position: fixed; bottom: 2rem; left: 50%;
   transform: translateX(-50%) translateY(80px);
@@ -187,7 +171,6 @@ nav {
 .toast.show { transform: translateX(-50%) translateY(0); }
 .toast.error { background: #8B2E2E; color: var(--cream); }
 
-/* ─── SECTION UTILS ─── */
 .eyebrow {
   font-size: 9px; letter-spacing: 0.4em;
   text-transform: uppercase; color: var(--toast);
@@ -199,9 +182,6 @@ nav {
 }
 .divider { height: 0.5px; background: rgba(212,196,168,0.12); }
 
-/* ────────────────────────────────────────────
-   PAGE 1 — MEMBER / SCAN
-──────────────────────────────────────────── */
 .p1-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -226,7 +206,7 @@ nav {
   font-size: 14px; line-height: 2.1;
   color: var(--sand); margin-top: 1.75rem; max-width: 380px;
 }
-.p1-cta { margin-top: 2.5rem; display: flex; gap: 1rem; align-items: center; }
+.p1-cta { margin-top: 2.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
 .btn-join {
   background: var(--toast); border: none;
   color: var(--charcoal); padding: 12px 30px;
@@ -249,7 +229,6 @@ nav {
   background: rgba(255,255,255,0.01);
 }
 
-/* Member card */
 .member-card {
   border: 0.5px solid rgba(212,196,168,0.2);
   padding: 2rem 2rem 1.5rem;
@@ -264,6 +243,7 @@ nav {
 }
 .member-id { font-size: 10px; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 4px; }
 .member-name { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--cream); margin-bottom: 1.25rem; }
+.member-email { font-size: 10px; color: var(--muted); margin-bottom: 1rem; }
 .mile-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
 .mile-label { font-size: 9px; letter-spacing: 0.2em; color: var(--muted); }
 .mile-fraction { font-size: 10px; color: var(--sand); }
@@ -272,7 +252,6 @@ nav {
 .miles-big { font-family: 'DM Serif Display', serif; font-size: 2.6rem; color: var(--toast); }
 .miles-unit { font-size: 9px; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; }
 
-/* Location scan grid */
 .locations-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: rgba(212,196,168,0.08);
@@ -287,7 +266,7 @@ nav {
 .loc-card:hover { background: rgba(212,196,168,0.04); }
 .loc-icon { font-size: 1.3rem; }
 .loc-name { font-size: 11px; letter-spacing: 0.12em; color: var(--cream); }
-.loc-sub { font-size: 10px; color: var(--muted); }
+.loc-sub { font-size: 10px; color: var(--muted); padding-right: 72px; }
 .loc-remaining {
   position: absolute; top: 8px; right: 8px;
   font-size: 9px; padding: 2px 7px;
@@ -296,19 +275,18 @@ nav {
 }
 .loc-remaining.maxed { background: rgba(80,30,10,0.5); color: rgba(212,196,168,0.4); }
 
-/* Draw box */
 .draw-box {
   border: 0.5px solid rgba(139,69,19,0.4);
   background: rgba(139,69,19,0.07);
   padding: 1.25rem 1.5rem;
   display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
 }
 .draw-left .draw-count { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--toast); }
 .draw-left .draw-label { font-size: 9px; letter-spacing: 0.22em; color: var(--muted); }
 .draw-right { text-align: right; }
 .draw-note { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; line-height: 1.7; }
 
-/* ─── GUEST STATE ─── */
 .guest-card {
   border: 0.5px dashed rgba(212,196,168,0.2);
   padding: 2.5rem;
@@ -319,10 +297,9 @@ nav {
   font-size: 13px; color: var(--muted); line-height: 2; margin-bottom: 1.5rem;
 }
 
-/* ─── RESET COUNTDOWN ─── */
 .reset-bar {
   font-size: 10px; letter-spacing: 0.12em; color: var(--muted);
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
 .reset-bar .dot {
   width: 6px; height: 6px;
@@ -332,9 +309,6 @@ nav {
 @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 .reset-time { color: var(--toast); font-variant-numeric: tabular-nums; }
 
-/* ────────────────────────────────────────────
-   PAGE 2 — MANIFESTO / EXHIBITION
-──────────────────────────────────────────── */
 .p2-hero {
   padding: 5rem 3.5rem 4rem;
   border-bottom: 0.5px solid rgba(212,196,168,0.12);
@@ -391,9 +365,6 @@ nav {
   padding: 3px 10px;
 }
 
-/* ────────────────────────────────────────────
-   PAGE 3 — PARTNERS
-──────────────────────────────────────────── */
 .p3-header {
   padding: 5rem 3.5rem 3rem;
   display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
@@ -444,9 +415,6 @@ nav {
 .cafe-area { font-size: 9px; letter-spacing: 0.22em; color: var(--toast); margin-bottom: .75rem; }
 .cafe-items { font-size: 11px; color: var(--muted); line-height: 1.8; }
 
-/* ────────────────────────────────────────────
-   PAGE 4 — ABOUT
-──────────────────────────────────────────── */
 .p4-layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 60px); }
 .p4-sidebar {
   padding: 4rem 2rem;
@@ -476,7 +444,6 @@ nav {
 .rule-n { font-size: 10px; color: var(--toast); padding-top: 2px; }
 .rule-t { font-family: 'Noto Serif TC', serif; font-size: 13px; color: var(--sand); line-height: 1.9; }
 
-/* ─── FOOTER ─── */
 footer {
   padding: 1.75rem 2.5rem;
   border-top: 0.5px solid rgba(212,196,168,0.12);
@@ -484,7 +451,6 @@ footer {
 }
 footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 
-/* ─── LOADING SPINNER ─── */
 .spinner {
   display: inline-block; width: 14px; height: 14px;
   border: 1.5px solid rgba(212,196,168,0.2);
@@ -494,26 +460,17 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── STEP INDICATOR ─── */
-.steps { display: flex; gap: 6px; margin-bottom: 1.5rem; }
-.step-dot { width: 20px; height: 3px; background: rgba(212,196,168,0.15); transition: background .3s; }
-.step-dot.active { background: var(--toast); }
-
-/* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
-  nav { padding: 0 1.25rem; }
-  .nav-links { gap: 1.2rem; }
+  nav { padding: 0 1.25rem; gap: 1rem; }
+  .nav-links { gap: 1.2rem; overflow-x: auto; }
   .p1-hero { grid-template-columns: 1fr; }
   .p1-left { padding: 3rem 1.5rem 2rem; border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
   .p1-right { padding: 2rem 1.5rem 3rem; }
   .p2-hero, .p3-header { padding: 3rem 1.5rem; }
   .p2-body { column-count: 1; }
   .p3-header { grid-template-columns: 1fr; gap: 1.5rem; }
-  .exhibit-grid { grid-template-columns: 1fr; }
-  .exhibit-item { border-right: none; }
-  .partner-cards { grid-template-columns: 1fr; }
-  .cafe-grid { grid-template-columns: 1fr; }
-  .cafe-item { border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
+  .exhibit-grid, .partner-cards, .cafe-grid, .locations-grid { grid-template-columns: 1fr; }
+  .exhibit-item, .cafe-item { border-right: none; }
   .p4-layout { grid-template-columns: 1fr; }
   .p4-sidebar { border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
   footer { flex-direction: column; gap: .5rem; text-align: center; }
@@ -521,10 +478,6 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 </style>
 </head>
 <body>
-
-<!-- ═══════════════════════════════════════════
-     NAV
-════════════════════════════════════════════ -->
 <nav>
   <div class="logo">
     IMPERFECT
@@ -536,14 +489,9 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
     <button class="nav-link" onclick="showPage('partners', this)">合作品牌</button>
     <button class="nav-link" onclick="showPage('about', this)">關於活動</button>
   </div>
-  <div class="nav-user" id="nav-user">
-    <!-- JS renders login state here -->
-  </div>
+  <div class="nav-user" id="nav-user"></div>
 </nav>
 
-<!-- ═══════════════════════════════════════════
-     PAGE 1 — MEMBER / SCAN
-════════════════════════════════════════════ -->
 <div class="page active" id="page-scan">
   <div class="p1-hero">
     <div class="p1-left">
@@ -555,14 +503,13 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
       <p class="p1-desc">
         這個世代追求極致完美，但我們相信，每一道刮痕、每一個瑕疵，都是故事的一部分。掃描咖啡廳 QR Code，累積里程，解鎖專屬抽獎機會。
       </p>
-      <div class="p1-cta" id="hero-cta">
+      <div class="p1-cta">
         <button class="btn-join" onclick="openModal('register')">掃碼加入會員</button>
         <button class="btn-login" onclick="openModal('login')">已有帳號登入</button>
       </div>
     </div>
 
     <div class="p1-right" id="p1-right-panel">
-      <!-- JS renders member card OR guest card -->
       <div class="guest-card">
         <p>加入本次限定會員，<br>透過掃碼在各咖啡廳累積里程，<br>兌換抽獎次數。</p>
         <button class="btn-join" style="display:inline-block;padding:12px 28px;" onclick="openModal('register')">立即加入</button>
@@ -571,9 +518,6 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PAGE 2 — MANIFESTO
-════════════════════════════════════════════ -->
 <div class="page" id="page-manifesto">
   <div class="p2-hero">
     <div class="p2-bg-num">∅</div>
@@ -626,15 +570,12 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
       <div class="ex-num">展品 06</div>
       <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">∞</span></div>
       <div class="ex-title">你也是展品</div>
-      <div class="ex-desc">掃描 QR Code，上傳你身上一個「不完美」的部分，成為這個展覽的一部分。</div>
+      <div class="ex-desc">掃描 QR Code，累積參與紀錄，成為這個展覽故事的一部分。</div>
       <span class="ex-tag">參與式藝術</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PAGE 3 — PARTNERS
-════════════════════════════════════════════ -->
 <div class="page" id="page-partners">
   <div class="p3-header">
     <div>
@@ -661,29 +602,14 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
   </div>
   <div class="cafes-section">
     <div class="eyebrow">合作咖啡廳 — 展品陳列據點</div>
-    <div class="cafe-grid">
-      <div class="cafe-item">
-        <div class="cafe-name">Café A</div>
-        <div class="cafe-area">大安區</div>
-        <div class="cafe-items">空氣清淨機、手沖套組</div>
-      </div>
-      <div class="cafe-item">
-        <div class="cafe-name">Café B</div>
-        <div class="cafe-area">信義區</div>
-        <div class="cafe-items">烤麵包機、手持攪拌機</div>
-      </div>
-      <div class="cafe-item">
-        <div class="cafe-name">Café C</div>
-        <div class="cafe-area">中山區</div>
-        <div class="cafe-items">咖啡機、電動磨豆機</div>
-      </div>
+    <div class="cafe-grid" id="partners-cafes-grid">
+      <div class="cafe-item"><div class="cafe-name">Café A</div><div class="cafe-area">大安區</div><div class="cafe-items">空氣清淨機、手沖套組</div></div>
+      <div class="cafe-item"><div class="cafe-name">Café B</div><div class="cafe-area">信義區</div><div class="cafe-items">烤麵包機、手持攪拌機</div></div>
+      <div class="cafe-item"><div class="cafe-name">Café C</div><div class="cafe-area">中山區</div><div class="cafe-items">咖啡機、電動磨豆機</div></div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PAGE 4 — ABOUT
-════════════════════════════════════════════ -->
 <div class="page" id="page-about">
   <div class="p4-layout">
     <div class="p4-sidebar">
@@ -710,7 +636,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
         </div>
         <div class="tl-item">
           <div class="tl-date">05.08</div>
-          <div><div class="tl-title">線上展覽開幕</div><div class="tl-desc">六件數位展品正式上線，參與互動裝置可獲得額外里程</div></div>
+          <div><div class="tl-title">線上展覽開幕</div><div class="tl-desc">六件數位展品正式上線，完成掃碼即可累積活動里程</div></div>
         </div>
         <div class="tl-item">
           <div class="tl-date">05.15</div>
@@ -724,9 +650,9 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
       <div class="rules" style="margin-top:2.5rem;">
         <div class="eyebrow">抽獎規則</div>
         <div class="rule-item"><div class="rule-n">01</div><div class="rule-t">每次掃碼獲得 30 里程，每家咖啡廳每日上限 3 次</div></div>
-        <div class="rule-item"><div class="rule-n">02</div><div class="rule-t">每晚午夜 00:00，各店掃碼次數自動重置，累積里程保留不清空</div></div>
+        <div class="rule-item"><div class="rule-n">02</div><div class="rule-t">每晚午夜 00:00 後，同會員於同店掃碼次數重新計算；累積總里程保留</div></div>
         <div class="rule-item"><div class="rule-n">03</div><div class="rule-t">每累積 60 里程自動兌換 1 次抽獎機會，無上限</div></div>
-        <div class="rule-item"><div class="rule-n">04</div><div class="rule-t">分享活動貼文並 tag @restyle2050，可獲得 20 里程獎勵</div></div>
+        <div class="rule-item"><div class="rule-n">04</div><div class="rule-t">活動主辦方保留調整展品與合作店點內容之權利</div></div>
         <div class="rule-item"><div class="rule-n">05</div><div class="rule-t">活動結束後里程歸零，不可兌換其他獎勵或轉讓</div></div>
         <div class="rule-item"><div class="rule-n">06</div><div class="rule-t">得獎者將於活動結束後 7 個工作日內以 email 通知</div></div>
       </div>
@@ -734,170 +660,174 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
   </div>
 </div>
 
-<!-- ─── FOOTER ─── -->
 <footer>
   <p>© 2025 Restyle 2050 × Imperfect Campaign</p>
   <p>本活動為期間限定會員制度，活動結束後帳號自動關閉</p>
 </footer>
 
-<!-- ═══════════════════════════════════════════
-     MODALS
-════════════════════════════════════════════ -->
-
-<!-- Register Modal -->
 <div class="modal-overlay" id="modal-register">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('register')">✕</button>
     <div class="modal-tag">加入會員 — 限定活動</div>
     <h2>成為不完美會員</h2>
-    <p>填寫資料後，系統將發送驗證碼至您的手機。</p>
+    <p>填寫姓名、Email 與密碼即可加入會員。若你想關閉 Email 驗證信，可在 Supabase Authentication 後台設定。</p>
 
-    <div class="steps">
-      <div class="step-dot active" id="reg-step-1"></div>
-      <div class="step-dot" id="reg-step-2"></div>
+    <div class="form-group">
+      <label class="form-label">姓名</label>
+      <input class="form-input" id="reg-name" type="text" placeholder="王小明" autocomplete="name">
     </div>
 
-    <!-- Step 1: Basic info + phone -->
-    <div id="reg-s1">
-      <div class="form-group">
-        <label class="form-label">姓名</label>
-        <input class="form-input" id="reg-name" type="text" placeholder="王小明" autocomplete="name">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" autocomplete="email">
-      </div>
-      <div class="form-group">
-        <label class="form-label">手機號碼</label>
-        <div class="otp-row">
-          <input class="form-input" id="reg-phone" type="tel" placeholder="0912345678" autocomplete="tel">
-          <button class="btn-send-otp" id="reg-send-otp" onclick="sendOTP()">發送驗證碼</button>
-        </div>
-        <div id="reg-phone-err" class="form-error" style="display:none;"></div>
-      </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" autocomplete="email">
     </div>
 
-    <!-- Step 2: OTP -->
-    <div id="reg-s2" style="display:none;">
-      <div class="form-group">
-        <label class="form-label">驗證碼（已發送至 <span id="reg-phone-display"></span>）</label>
-        <input class="form-input" id="reg-otp" type="text" placeholder="6 位數字" maxlength="6" inputmode="numeric">
-        <div id="reg-otp-err" class="form-error" style="display:none;"></div>
-        <div id="reg-otp-ok" class="form-success" style="display:none;"></div>
-      </div>
-      <button class="btn-ghost-sm" onclick="backToStep1()" style="margin-bottom:0;">← 返回修改</button>
+    <div class="form-group">
+      <label class="form-label">密碼</label>
+      <input class="form-input" id="reg-password" type="password" placeholder="至少 6 碼" autocomplete="new-password">
+      <div class="form-help">建議使用 8 碼以上。</div>
     </div>
 
-    <button class="btn-primary" id="reg-btn" onclick="handleRegister()">發送驗證碼</button>
+    <div class="form-group">
+      <label class="form-label">確認密碼</label>
+      <input class="form-input" id="reg-password-confirm" type="password" placeholder="再次輸入密碼" autocomplete="new-password">
+    </div>
+
+    <button class="btn-primary" id="reg-btn" onclick="handleRegister()">立即加入</button>
     <div id="reg-general-err" class="form-error" style="display:none;margin-top:.75rem;"></div>
   </div>
 </div>
 
-<!-- Login Modal -->
 <div class="modal-overlay" id="modal-login">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('login')">✕</button>
     <div class="modal-tag">會員登入</div>
     <h2>歡迎回來</h2>
-    <p>輸入您的 Email，系統將發送驗證碼登入。</p>
+    <p>輸入您的 Email 與密碼登入。</p>
+
     <div class="form-group">
       <label class="form-label">Email</label>
-      <input class="form-input" id="login-email" type="email" placeholder="your@email.com">
+      <input class="form-input" id="login-email" type="email" placeholder="your@email.com" autocomplete="email">
     </div>
-    <div class="form-group" id="login-otp-group" style="display:none;">
-      <label class="form-label">驗證碼</label>
-      <input class="form-input" id="login-otp" type="text" placeholder="6 位數字" maxlength="6" inputmode="numeric">
+
+    <div class="form-group">
+      <label class="form-label">密碼</label>
+      <input class="form-input" id="login-password" type="password" placeholder="請輸入密碼" autocomplete="current-password">
       <div id="login-err" class="form-error" style="display:none;"></div>
     </div>
-    <button class="btn-primary" id="login-btn" onclick="handleLogin()">發送驗證碼</button>
+
+    <button class="btn-primary" id="login-btn" onclick="handleLogin()">登入</button>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════ -->
 <script>
-// ──────────────────────────────────────────
-// CONFIG — 填入你的 Supabase 資訊
-// ──────────────────────────────────────────
-const SUPABASE_URL  = 'https://jndqxhabxwpudcxtowbc.supabase.co'
-const SUPABASE_ANON = 'sb_secret_7SbfVwEgfjI1FY3Kqb-gsA_kPxrREwz'
+const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co'
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY'
 
 const { createClient } = supabase
 const db = createClient(SUPABASE_URL, SUPABASE_ANON)
 
-// ──────────────────────────────────────────
-// APP STATE
-// ──────────────────────────────────────────
-let currentMember = null  // { id, name, email, phone, total_miles, draw_tickets }
-let locations     = []    // from DB
-let dailyScans    = {}    // { location_id: scan_count }
-let regStep       = 1     // 1 = fill info, 2 = verify OTP
+let currentMember = null
+let locations = []
+let dailyScans = {}
+let countdownTimer = null
 
-// ──────────────────────────────────────────
-// INIT
-// ──────────────────────────────────────────
 async function init() {
-  // Restore session from localStorage
-  const saved = localStorage.getItem('imperfect_member_id')
-  if (saved) {
-    await loadMember(saved)
+  const { data: { session } } = await db.auth.getSession()
+  if (session?.user) {
+    await ensureMemberLoaded(session.user.id)
   }
+
   await loadLocations()
   renderNavUser()
   renderRightPanel()
+  renderPartnersCafes()
   startResetCountdown()
 
-  // Handle QR scan: ?scan=cafe-a-daan
   const params = new URLSearchParams(location.search)
   const scanKey = params.get('scan')
   if (scanKey && currentMember) {
     await processScan(scanKey)
   } else if (scanKey && !currentMember) {
-    // Prompt register, remember the scan intent
     sessionStorage.setItem('pending_scan', scanKey)
     openModal('register')
   }
+
+  db.auth.onAuthStateChange(async (_event, session) => {
+    if (session?.user) {
+      await ensureMemberLoaded(session.user.id)
+    } else {
+      currentMember = null
+      dailyScans = {}
+    }
+    await loadLocations()
+    renderNavUser()
+    renderRightPanel()
+    renderPartnersCafes()
+  })
 }
 
-async function loadMember(id) {
+async function ensureMemberLoaded(userId) {
   const { data, error } = await db
     .from('members')
     .select('*')
-    .eq('id', id)
+    .eq('id', userId)
     .single()
-  if (data && !error) {
+
+  if (!error && data) {
     currentMember = data
-    localStorage.setItem('imperfect_member_id', data.id)
-  } else {
-    localStorage.removeItem('imperfect_member_id')
+    await loadDailyScans()
+    return true
   }
+
+  currentMember = null
+  dailyScans = {}
+  return false
 }
 
 async function loadLocations() {
-  const { data } = await db.from('locations').select('*').eq('active', true)
-  if (data) locations = data
-  if (currentMember) await loadDailyScans()
+  const { data, error } = await db
+    .from('locations')
+    .select('*')
+    .eq('active', true)
+    .order('name', { ascending: true })
+
+  if (!error && data) locations = data
+
+  if (currentMember) {
+    await loadDailyScans()
+  }
 }
 
 async function loadDailyScans() {
   if (!currentMember) return
-  const today = new Date().toISOString().slice(0,10)
-  const { data } = await db
+
+  const { data, error } = await db
     .from('daily_scan_limits')
     .select('location_id, scan_count')
     .eq('member_id', currentMember.id)
-    .eq('scan_date', today)
+    .eq('scan_date', todayInTaipei())
+
   dailyScans = {}
-  if (data) data.forEach(r => { dailyScans[r.location_id] = r.scan_count })
+  if (!error && data) {
+    data.forEach(row => {
+      dailyScans[row.location_id] = row.scan_count
+    })
+  }
 }
 
-// ──────────────────────────────────────────
-// PAGE NAVIGATION
-// ──────────────────────────────────────────
+function todayInTaipei() {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+  return formatter.format(new Date())
+}
+
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
@@ -905,14 +835,11 @@ function showPage(id, btn) {
   if (btn) btn.classList.add('active')
 }
 
-// ──────────────────────────────────────────
-// RENDER
-// ──────────────────────────────────────────
 function renderNavUser() {
   const el = document.getElementById('nav-user')
   if (currentMember) {
     el.innerHTML = `
-      <span>Hi, ${currentMember.name.split('')[0]}***</span>
+      <span>Hi, ${escapeHtml(maskName(currentMember.name))}</span>
       <span class="nav-miles">${currentMember.total_miles} mi</span>
       <button class="btn-ghost-sm" onclick="logout()" style="font-size:9px;padding:5px 10px;">登出</button>
     `
@@ -935,19 +862,19 @@ function renderRightPanel() {
 
   const m = currentMember
   const pct = Math.min((m.total_miles / 500) * 100, 100).toFixed(1)
-  const nextMilestone = Math.ceil(m.total_miles / 60) * 60
+  const nextMilestone = Math.ceil((m.total_miles + 1) / 60) * 60
   const toNext = nextMilestone - m.total_miles
 
   const locCards = locations.map(loc => {
     const count = dailyScans[loc.id] || 0
-    const remaining = 3 - count
+    const remaining = Math.max(0, 3 - count)
     const maxed = remaining <= 0
     return `
       <div class="loc-card">
         <span class="loc-remaining ${maxed ? 'maxed' : ''}">${maxed ? '已達上限' : `剩 ${remaining} 次`}</span>
         <div class="loc-icon">☕</div>
-        <div class="loc-name">${loc.name}</div>
-        <div class="loc-sub">${loc.district} · ${loc.items}</div>
+        <div class="loc-name">${escapeHtml(loc.name)}</div>
+        <div class="loc-sub">${escapeHtml(loc.district || '')}${loc.district && loc.items ? ' · ' : ''}${escapeHtml(loc.items || '')}</div>
       </div>
     `
   }).join('')
@@ -955,8 +882,9 @@ function renderRightPanel() {
   el.innerHTML = `
     <div class="member-card">
       <span class="member-card-tag">Imperfect Member</span>
-      <div class="member-id">ID #${m.id.slice(0,8).toUpperCase()}</div>
-      <div class="member-name">${m.name}</div>
+      <div class="member-id">ID #${escapeHtml(m.id.slice(0, 8).toUpperCase())}</div>
+      <div class="member-name">${escapeHtml(m.name)}</div>
+      <div class="member-email">${escapeHtml(m.email)}</div>
       <div class="mile-header">
         <span class="mile-label">里程累積</span>
         <span class="mile-fraction">${m.total_miles} mi</span>
@@ -966,7 +894,7 @@ function renderRightPanel() {
       <div class="miles-unit">Imperfect Miles</div>
     </div>
 
-    <div class="locations-grid">${locCards}</div>
+    <div class="locations-grid">${locCards || ''}</div>
 
     <div class="draw-box">
       <div class="draw-left">
@@ -980,53 +908,91 @@ function renderRightPanel() {
 
     <div class="reset-bar">
       <div class="dot"></div>
-      <span>各店次數將於午夜重置，剩</span>
+      <span>各店次數將於台灣午夜重置，剩</span>
       <span class="reset-time" id="reset-countdown"></span>
     </div>
   `
   startResetCountdown()
 }
 
-// ──────────────────────────────────────────
-// COUNTDOWN TO MIDNIGHT
-// ──────────────────────────────────────────
-function startResetCountdown() {
-  function tick() {
-    const el = document.getElementById('reset-countdown')
-    if (!el) return
-    const now = new Date()
-    const midnight = new Date()
-    midnight.setHours(24, 0, 0, 0)
-    const diff = midnight - now
-    const h = String(Math.floor(diff / 3600000)).padStart(2,'0')
-    const min = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0')
-    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0')
-    el.textContent = `${h}:${min}:${s}`
-  }
-  tick()
-  setInterval(tick, 1000)
+function renderPartnersCafes() {
+  const el = document.getElementById('partners-cafes-grid')
+  if (!el || locations.length === 0) return
+  el.innerHTML = locations.map(loc => `
+    <div class="cafe-item">
+      <div class="cafe-name">${escapeHtml(loc.name)}</div>
+      <div class="cafe-area">${escapeHtml(loc.district || '合作據點')}</div>
+      <div class="cafe-items">${escapeHtml(loc.items || '現場展品資訊')}</div>
+    </div>
+  `).join('')
 }
 
-// ──────────────────────────────────────────
-// QR SCAN PROCESSING
-// ──────────────────────────────────────────
+function getMsUntilTaipeiMidnight() {
+  const now = new Date()
+  const taipeiNowText = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Taipei',
+    hour12: false,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).format(now)
+
+  const currentTaipei = new Date(taipeiNowText.replace(' ', 'T'))
+  const nextTaipeiMidnight = new Date(currentTaipei)
+  nextTaipeiMidnight.setDate(nextTaipeiMidnight.getDate() + 1)
+  nextTaipeiMidnight.setHours(0, 0, 0, 0)
+
+  return nextTaipeiMidnight.getTime() - currentTaipei.getTime()
+}
+
+function startResetCountdown() {
+  const tick = async () => {
+    const el = document.getElementById('reset-countdown')
+    if (!el) return
+
+    const diff = Math.max(0, getMsUntilTaipeiMidnight())
+    const h = String(Math.floor(diff / 3600000)).padStart(2, '0')
+    const min = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0')
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0')
+    el.textContent = `${h}:${min}:${s}`
+
+    if (diff < 1000 && currentMember) {
+      await loadDailyScans()
+      renderRightPanel()
+    }
+  }
+
+  tick()
+  if (countdownTimer) clearInterval(countdownTimer)
+  countdownTimer = setInterval(tick, 1000)
+}
+
 async function processScan(qrKey) {
   const loc = locations.find(l => l.qr_code_key === qrKey)
-  if (!loc) { showToast('無效的 QR Code', true); return }
+  if (!loc) {
+    showToast('無效的 QR Code', true)
+    return
+  }
 
   const { data, error } = await db.rpc('scan_and_earn', {
-    p_member_id:   currentMember.id,
     p_location_id: loc.id,
-    p_miles:       30,
+    p_miles: 30,
     p_daily_limit: 3
   })
 
-  if (error) { showToast('系統錯誤，請稍後再試', true); return }
+  if (error) {
+    showToast(error.message || '系統錯誤，請稍後再試', true)
+    history.replaceState({}, '', location.pathname)
+    return
+  }
 
-  if (!data.success) {
-    showToast(data.message, true)
+  if (!data?.success) {
+    showToast(data?.message || '掃碼失敗', true)
   } else {
-    currentMember.total_miles  = data.total_miles
+    currentMember.total_miles = data.total_miles
     currentMember.draw_tickets = data.draw_tickets
     dailyScans[loc.id] = data.scans_today
     renderNavUser()
@@ -1034,230 +1000,142 @@ async function processScan(qrKey) {
     showToast(`+${data.miles_earned} 里程！今日 ${loc.name} 還剩 ${data.scans_remaining} 次`)
   }
 
-  // Clear URL param
   history.replaceState({}, '', location.pathname)
 }
 
-// ──────────────────────────────────────────
-// REGISTER FLOW
-// ──────────────────────────────────────────
-async function sendOTP() {
-  const phone = document.getElementById('reg-phone').value.trim()
-  if (!phone.match(/^09\d{8}$/)) {
-    showErr('reg-phone-err', '請輸入正確的台灣手機號碼（09xxxxxxxx）')
+async function handleRegister() {
+  const name = document.getElementById('reg-name').value.trim()
+  const email = document.getElementById('reg-email').value.trim().toLowerCase()
+  const password = document.getElementById('reg-password').value
+  const confirmPassword = document.getElementById('reg-password-confirm').value
+  const btn = document.getElementById('reg-btn')
+
+  hideErr('reg-general-err')
+
+  if (!name || !email || !password || !confirmPassword) {
+    showErr('reg-general-err', '請填寫所有欄位')
     return
   }
-  hideErr('reg-phone-err')
+  if (password.length < 6) {
+    showErr('reg-general-err', '密碼至少需要 6 碼')
+    return
+  }
+  if (password !== confirmPassword) {
+    showErr('reg-general-err', '兩次輸入的密碼不一致')
+    return
+  }
 
-  const btn = document.getElementById('reg-send-otp')
-  btn.disabled = true; btn.textContent = '發送中...'
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner"></span>'
 
-  // Generate 6-digit OTP and store in Supabase (via service function)
-  const code = String(Math.floor(100000 + Math.random() * 900000))
-  const { error } = await db.from('otp_verifications').insert({
-    phone, code,
-    expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  const { data: signUpData, error: signUpError } = await db.auth.signUp({
+    email,
+    password
   })
 
-  if (error) {
-    showErr('reg-phone-err', '發送失敗，請稍後再試')
-    btn.disabled = false; btn.textContent = '發送驗證碼'
+  if (signUpError) {
+    showErr('reg-general-err', humanizeAuthError(signUpError.message))
+    btn.disabled = false
+    btn.textContent = '立即加入'
     return
   }
 
-  // In production: call your SMS API edge function here
-  // await fetch('/api/send-sms', { method: 'POST', body: JSON.stringify({ phone, code }) })
-  console.log('[DEV] OTP:', code) // ← 開發時從 console 取得
-
-  // Move to step 2
-  document.getElementById('reg-phone-display').textContent = phone
-  document.getElementById('reg-s1').style.display = 'none'
-  document.getElementById('reg-s2').style.display = 'block'
-  document.getElementById('reg-step-1').classList.add('active')
-  document.getElementById('reg-step-2').classList.add('active')
-  document.getElementById('reg-btn').textContent = '確認驗證碼並加入'
-  regStep = 2
-
-  // Countdown resend
-  let seconds = 60
-  const interval = setInterval(() => {
-    seconds--
-    btn.textContent = `${seconds}s 後重新發送`
-    if (seconds <= 0) {
-      clearInterval(interval)
-      btn.disabled = false; btn.textContent = '重新發送'
-    }
-  }, 1000)
-}
-
-async function handleRegister() {
-  if (regStep === 1) { sendOTP(); return }
-
-  const name  = document.getElementById('reg-name').value.trim()
-  const email = document.getElementById('reg-email').value.trim()
-  const phone = document.getElementById('reg-phone').value.trim()
-  const otp   = document.getElementById('reg-otp').value.trim()
-
-  if (!name || !email || !phone || !otp) {
-    showErr('reg-otp-err', '請填寫所有欄位'); return
-  }
-
-  const btn = document.getElementById('reg-btn')
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
-
-  // Verify OTP
-  const { data: otpRow } = await db
-    .from('otp_verifications')
-    .select('*')
-    .eq('phone', phone)
-    .eq('code', otp)
-    .eq('used', false)
-    .gte('expires_at', new Date().toISOString())
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
-
-  if (!otpRow) {
-    showErr('reg-otp-err', '驗證碼錯誤或已過期')
-    btn.disabled = false; btn.textContent = '確認驗證碼並加入'
+  const user = signUpData.user
+  if (!user) {
+    showErr('reg-general-err', '註冊失敗，請稍後再試')
+    btn.disabled = false
+    btn.textContent = '立即加入'
     return
   }
 
-  // Mark OTP used
-  await db.from('otp_verifications').update({ used: true }).eq('id', otpRow.id)
-
-  // Create member
-  const { data: member, error } = await db
+  const { error: memberError } = await db
     .from('members')
-    .insert({ name, email, phone })
-    .select()
-    .single()
+    .insert({ id: user.id, name, email })
 
-  if (error) {
-    if (error.code === '23505') {
-      showErr('reg-general-err', '此 Email 已經註冊過，請直接登入')
-    } else {
-      showErr('reg-general-err', '註冊失敗，請稍後再試')
-    }
-    btn.disabled = false; btn.textContent = '確認驗證碼並加入'
+  if (memberError && !memberError.message.includes('duplicate key')) {
+    showErr('reg-general-err', '會員資料建立失敗，請稍後再試')
+    btn.disabled = false
+    btn.textContent = '立即加入'
     return
   }
 
-  currentMember = member
-  localStorage.setItem('imperfect_member_id', member.id)
+  await ensureMemberLoaded(user.id)
   await loadLocations()
   closeModal('register')
+  resetRegisterForm()
   renderNavUser()
   renderRightPanel()
   showToast('歡迎加入不完美會員！')
 
-  // Handle pending scan
   const pending = sessionStorage.getItem('pending_scan')
-  if (pending) { sessionStorage.removeItem('pending_scan'); await processScan(pending) }
-}
+  if (pending) {
+    sessionStorage.removeItem('pending_scan')
+    await processScan(pending)
+  }
 
-function backToStep1() {
-  document.getElementById('reg-s1').style.display = 'block'
-  document.getElementById('reg-s2').style.display = 'none'
-  document.getElementById('reg-step-2').classList.remove('active')
-  document.getElementById('reg-btn').textContent = '發送驗證碼'
-  regStep = 1
+  btn.disabled = false
+  btn.textContent = '立即加入'
 }
-
-// ──────────────────────────────────────────
-// LOGIN FLOW (email-based OTP lookup)
-// ──────────────────────────────────────────
-let loginStep = 1
 
 async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase()
+  const password = document.getElementById('login-password').value
   const btn = document.getElementById('login-btn')
 
-  if (loginStep === 1) {
-    const email = document.getElementById('login-email').value.trim()
-    if (!email.includes('@')) { return }
+  hideErr('login-err')
 
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
-
-    const { data: member } = await db
-      .from('members').select('*').eq('email', email).single()
-
-    if (!member) {
-      btn.disabled = false; btn.textContent = '發送驗證碼'
-      showErr('login-err', '找不到此 Email 的會員')
-      document.getElementById('login-otp-group').style.display = 'block'
-      return
-    }
-
-    // Send OTP to their phone
-    const code = String(Math.floor(100000 + Math.random() * 900000))
-    await db.from('otp_verifications').insert({
-      phone: member.phone, code,
-      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
-    })
-    console.log('[DEV] Login OTP:', code)
-
-    loginStep = 2
-    document.getElementById('login-otp-group').style.display = 'block'
-    btn.disabled = false; btn.textContent = '確認登入'
-    document.getElementById('login-btn').setAttribute('data-email', email)
+  if (!email || !password) {
+    showErr('login-err', '請輸入 Email 與密碼')
     return
   }
 
-  // Step 2: verify
-  const email = document.getElementById('login-email').value.trim()
-  const otp   = document.getElementById('login-otp').value.trim()
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner"></span>'
 
-  const { data: member } = await db.from('members').select('*').eq('email', email).single()
-  const { data: otpRow  } = await db
-    .from('otp_verifications')
-    .select('*')
-    .eq('phone', member?.phone || '')
-    .eq('code', otp).eq('used', false)
-    .gte('expires_at', new Date().toISOString())
-    .order('created_at', { ascending: false })
-    .limit(1).single()
-
-  if (!otpRow || !member) {
-    showErr('login-err', '驗證碼錯誤或已過期')
-    btn.disabled = false; btn.textContent = '確認登入'
+  const { data, error } = await db.auth.signInWithPassword({ email, password })
+  if (error || !data.user) {
+    showErr('login-err', 'Email 或密碼錯誤')
+    btn.disabled = false
+    btn.textContent = '登入'
     return
   }
 
-  await db.from('otp_verifications').update({ used: true }).eq('id', otpRow.id)
-  currentMember = member
-  localStorage.setItem('imperfect_member_id', member.id)
+  await ensureMemberLoaded(data.user.id)
   await loadLocations()
   closeModal('login')
-  loginStep = 1
+  resetLoginForm()
   renderNavUser()
   renderRightPanel()
-  showToast(`歡迎回來，${member.name}！`)
+  showToast(`歡迎回來，${currentMember?.name || ''}！`)
+
+  const pending = sessionStorage.getItem('pending_scan')
+  if (pending) {
+    sessionStorage.removeItem('pending_scan')
+    await processScan(pending)
+  }
+
+  btn.disabled = false
+  btn.textContent = '登入'
 }
 
-// ──────────────────────────────────────────
-// LOGOUT
-// ──────────────────────────────────────────
-function logout() {
+async function logout() {
+  await db.auth.signOut()
   currentMember = null
-  localStorage.removeItem('imperfect_member_id')
   dailyScans = {}
   renderNavUser()
   renderRightPanel()
 }
 
-// ──────────────────────────────────────────
-// MODAL HELPERS
-// ──────────────────────────────────────────
 function openModal(id) {
   document.getElementById('modal-' + id).classList.add('open')
   document.body.style.overflow = 'hidden'
 }
+
 function closeModal(id) {
   document.getElementById('modal-' + id).classList.remove('open')
   document.body.style.overflow = ''
 }
-// Close on overlay click
+
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => {
     if (e.target === o) {
@@ -1267,28 +1145,63 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
   })
 })
 
-// ──────────────────────────────────────────
-// TOAST & ERROR HELPERS
-// ──────────────────────────────────────────
 let toastTimer
 function showToast(msg, isError = false) {
   const el = document.getElementById('toast')
   el.textContent = msg
   el.className = 'toast show' + (isError ? ' error' : '')
   clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { el.classList.remove('show') }, 3000)
-}
-function showErr(id, msg) {
-  const el = document.getElementById(id)
-  el.textContent = msg; el.style.display = 'block'
-}
-function hideErr(id) {
-  document.getElementById(id).style.display = 'none'
+  toastTimer = setTimeout(() => { el.classList.remove('show') }, 3200)
 }
 
-// ──────────────────────────────────────────
-// BOOT
-// ──────────────────────────────────────────
+function showErr(id, msg) {
+  const el = document.getElementById(id)
+  el.textContent = msg
+  el.style.display = 'block'
+}
+
+function hideErr(id) {
+  const el = document.getElementById(id)
+  if (el) el.style.display = 'none'
+}
+
+function resetRegisterForm() {
+  document.getElementById('reg-name').value = ''
+  document.getElementById('reg-email').value = ''
+  document.getElementById('reg-password').value = ''
+  document.getElementById('reg-password-confirm').value = ''
+  hideErr('reg-general-err')
+}
+
+function resetLoginForm() {
+  document.getElementById('login-email').value = ''
+  document.getElementById('login-password').value = ''
+  hideErr('login-err')
+}
+
+function maskName(name) {
+  if (!name) return '會員'
+  if (name.length === 1) return name + '*'
+  return name[0] + '*'.repeat(Math.max(1, name.length - 1))
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function humanizeAuthError(message) {
+  if (!message) return '註冊失敗，請稍後再試'
+  if (message.includes('already registered')) return '這個 Email 已經註冊過了，請直接登入'
+  if (message.includes('Password should be at least')) return '密碼至少需要 6 碼'
+  if (message.includes('Unable to validate email address')) return 'Email 格式不正確'
+  return message
+}
+
 init()
 </script>
 </body>
