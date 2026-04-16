@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不完美也沒關係 × Restyle 2050</title>
+<meta name="description" content="Restyle 2050 × 咖啡廳聯名活動：掃碼累積里程，抽獎不完美整新品電器">
+
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── RESET & TOKENS ─── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --cream: #F5F0E8;
+  --warm-white: #FAF8F4;
+  --sand: #D4C4A8;
+  --toast: #B8956A;
+  --espresso: #3D2B1F;
+  --charcoal: #1A1614;
+  --rust: #8B4513;
+  --sage: #7A8C7E;
+  --accent: #C17F3A;
+  --muted: #8A7E72;
+  --success: #4A7C59;
+  --danger: #8B2E2E;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--charcoal);
+  color: var(--cream);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.6;
+}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; }
+input, button { font-family: inherit; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(26,22,20,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid rgba(212,196,168,0.18);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+}
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--cream);
+  line-height: 1.15;
+}
+.logo small {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  color: var(--toast);
+  text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 2.5rem; align-items: center; }
+.nav-link {
+  background: none; border: none;
+  color: var(--muted);
+  font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.nav-link.active, .nav-link:hover { color: var(--cream); border-bottom-color: var(--toast); }
+.nav-user {
+  display: flex; align-items: center; gap: 1rem;
+  font-size: 10px; letter-spacing: 0.12em; color: var(--muted);
+}
+.nav-miles { color: var(--toast); font-size: 13px; font-family: 'DM Serif Display', serif; }
+
+/* ─── PAGE SYSTEM ─── */
+.page { display: none; padding-top: 60px; min-height: 100vh; }
+.page.active { display: block; animation: fadeUp .35s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(10,8,7,0.88);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--charcoal);
+  border: 0.5px solid rgba(212,196,168,0.25);
+  padding: 2.5rem;
+  width: min(480px, 92vw);
+  position: relative;
+  transform: translateY(20px);
+  transition: transform .25s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 1rem; right: 1.25rem;
+  background: none; border: none; color: var(--muted);
+  font-size: 18px; line-height: 1;
+}
+.modal-tag {
+  font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--toast); margin-bottom: 1.25rem;
+}
+.modal h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem; color: var(--cream);
+  margin-bottom: 0.5rem;
+}
+.modal p { font-family: 'Noto Serif TC', serif; font-size: 13px; color: var(--muted); line-height: 1.9; margin-bottom: 1.5rem; }
+
+/* ─── FORM ─── */
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 6px; }
+.form-input {
+  width: 100%;
+  background: rgba(212,196,168,0.06);
+  border: 0.5px solid rgba(212,196,168,0.2);
+  color: var(--cream);
+  padding: 10px 14px;
+  font-size: 13px; font-family: 'DM Mono', monospace;
+  outline: none;
+  transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--toast); }
+.form-input::placeholder { color: rgba(212,196,168,0.3); }
+.otp-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.btn-send-otp {
+  background: none; border: 0.5px solid rgba(212,196,168,0.3);
+  color: var(--sand); font-size: 10px; letter-spacing: 0.15em;
+  padding: 0 14px; white-space: nowrap;
+  transition: all .2s;
+}
+.btn-send-otp:hover { border-color: var(--toast); color: var(--toast); }
+.btn-send-otp:disabled { opacity: .4; pointer-events: none; }
+
+.btn-primary {
+  display: block; width: 100%;
+  background: var(--toast); border: none;
+  color: var(--charcoal);
+  padding: 13px; text-align: center;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background .2s;
+  margin-top: 1.5rem;
+}
+.btn-primary:hover { background: var(--accent); }
+.btn-primary:disabled { opacity: .5; pointer-events: none; }
+.btn-ghost-sm {
+  background: none; border: 0.5px solid rgba(212,196,168,0.2);
+  color: var(--muted); font-size: 10px; letter-spacing: 0.15em;
+  padding: 8px 18px; transition: all .2s;
+}
+.btn-ghost-sm:hover { color: var(--cream); border-color: var(--sand); }
+.form-error { font-size: 10px; color: #E07070; margin-top: 6px; letter-spacing: 0.1em; }
+.form-success { font-size: 10px; color: #6BA882; margin-top: 6px; letter-spacing: 0.1em; }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--toast); color: var(--charcoal);
+  padding: 10px 28px; font-size: 11px; letter-spacing: 0.18em;
+  z-index: 3000; transition: transform .3s;
+  pointer-events: none; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { background: #8B2E2E; color: var(--cream); }
+
+/* ─── SECTION UTILS ─── */
+.eyebrow {
+  font-size: 9px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--toast);
+  margin-bottom: 1rem;
+}
+.sec-title {
+  font-family: 'DM Serif Display', serif;
+  color: var(--cream); line-height: 1.08;
+}
+.divider { height: 0.5px; background: rgba(212,196,168,0.12); }
+
+/* ────────────────────────────────────────────
+   PAGE 1 — MEMBER / SCAN
+──────────────────────────────────────────── */
+.p1-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 60px);
+}
+.p1-left {
+  padding: 5rem 3.5rem 4rem;
+  display: flex; flex-direction: column; justify-content: center;
+  border-right: 0.5px solid rgba(212,196,168,0.12);
+}
+.p1-title { font-size: clamp(3rem,5vw,4.8rem); }
+.p1-title .italic { font-style: italic; color: var(--toast); }
+.p1-title .strike { position: relative; display: inline-block; }
+.p1-title .strike::after {
+  content: ''; position: absolute;
+  left: -2px; right: -2px; top: 52%;
+  height: 2.5px; background: var(--rust);
+  transform: rotate(-1.2deg);
+}
+.p1-desc {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px; line-height: 2.1;
+  color: var(--sand); margin-top: 1.75rem; max-width: 380px;
+}
+.p1-cta { margin-top: 2.5rem; display: flex; gap: 1rem; align-items: center; }
+.btn-join {
+  background: var(--toast); border: none;
+  color: var(--charcoal); padding: 12px 30px;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background .2s;
+}
+.btn-join:hover { background: var(--accent); }
+.btn-login {
+  background: none; border: 0.5px solid rgba(212,196,168,0.28);
+  color: var(--muted); padding: 12px 22px;
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  transition: all .2s;
+}
+.btn-login:hover { color: var(--cream); border-color: var(--sand); }
+
+.p1-right {
+  padding: 4rem 3rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
+  justify-content: center;
+  background: rgba(255,255,255,0.01);
+}
+
+/* Member card */
+.member-card {
+  border: 0.5px solid rgba(212,196,168,0.2);
+  padding: 2rem 2rem 1.5rem;
+  position: relative;
+  background: rgba(212,196,168,0.03);
+}
+.member-card-tag {
+  position: absolute; top: -1px; left: 1.5rem;
+  background: var(--toast); color: var(--charcoal);
+  font-size: 8.5px; letter-spacing: 0.3em; text-transform: uppercase;
+  padding: 3px 10px;
+}
+.member-id { font-size: 10px; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 4px; }
+.member-name { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--cream); margin-bottom: 1.25rem; }
+.mile-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.mile-label { font-size: 9px; letter-spacing: 0.2em; color: var(--muted); }
+.mile-fraction { font-size: 10px; color: var(--sand); }
+.mile-bar { height: 2.5px; background: rgba(212,196,168,0.12); margin-bottom: 1rem; }
+.mile-fill { height: 100%; background: var(--toast); transition: width .7s cubic-bezier(.4,0,.2,1); }
+.miles-big { font-family: 'DM Serif Display', serif; font-size: 2.6rem; color: var(--toast); }
+.miles-unit { font-size: 9px; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; }
+
+/* Location scan grid */
+.locations-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background: rgba(212,196,168,0.08);
+}
+.loc-card {
+  background: var(--charcoal);
+  padding: 1.25rem;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: background .2s;
+  position: relative;
+}
+.loc-card:hover { background: rgba(212,196,168,0.04); }
+.loc-icon { font-size: 1.3rem; }
+.loc-name { font-size: 11px; letter-spacing: 0.12em; color: var(--cream); }
+.loc-sub { font-size: 10px; color: var(--muted); }
+.loc-remaining {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 9px; padding: 2px 7px;
+  background: rgba(139,69,19,0.3); color: var(--sand);
+  letter-spacing: 0.1em;
+}
+.loc-remaining.maxed { background: rgba(80,30,10,0.5); color: rgba(212,196,168,0.4); }
+
+/* Draw box */
+.draw-box {
+  border: 0.5px solid rgba(139,69,19,0.4);
+  background: rgba(139,69,19,0.07);
+  padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.draw-left .draw-count { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--toast); }
+.draw-left .draw-label { font-size: 9px; letter-spacing: 0.22em; color: var(--muted); }
+.draw-right { text-align: right; }
+.draw-note { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; line-height: 1.7; }
+
+/* ─── GUEST STATE ─── */
+.guest-card {
+  border: 0.5px dashed rgba(212,196,168,0.2);
+  padding: 2.5rem;
+  text-align: center;
+}
+.guest-card p {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px; color: var(--muted); line-height: 2; margin-bottom: 1.5rem;
+}
+
+/* ─── RESET COUNTDOWN ─── */
+.reset-bar {
+  font-size: 10px; letter-spacing: 0.12em; color: var(--muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.reset-bar .dot {
+  width: 6px; height: 6px;
+  background: var(--toast); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+.reset-time { color: var(--toast); font-variant-numeric: tabular-nums; }
+
+/* ────────────────────────────────────────────
+   PAGE 2 — MANIFESTO / EXHIBITION
+──────────────────────────────────────────── */
+.p2-hero {
+  padding: 5rem 3.5rem 4rem;
+  border-bottom: 0.5px solid rgba(212,196,168,0.12);
+  position: relative; overflow: hidden;
+}
+.p2-bg-num {
+  position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+  font-family: 'DM Serif Display', serif;
+  font-size: min(200px, 20vw); color: rgba(212,196,168,0.03);
+  line-height: 1; user-select: none; pointer-events: none;
+}
+.p2-title { font-size: clamp(2.5rem, 4vw, 4rem); max-width: 700px; }
+.p2-title .line2 { font-style: italic; color: var(--toast); }
+.p2-body {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px; line-height: 2.3; color: var(--sand);
+  max-width: 640px; margin-top: 1.75rem;
+  column-count: 2; column-gap: 3rem;
+}
+.exhibit-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+}
+.exhibit-item {
+  border-right: 0.5px solid rgba(212,196,168,0.1);
+  border-bottom: 0.5px solid rgba(212,196,168,0.1);
+  padding: 2.5rem;
+  cursor: default;
+  transition: background .2s;
+}
+.exhibit-item:hover { background: rgba(212,196,168,0.025); }
+.exhibit-item:nth-child(3n) { border-right: none; }
+.ex-num { font-size: 9px; letter-spacing: 0.3em; color: var(--muted); margin-bottom: 1rem; }
+.ex-img {
+  width: 100%; aspect-ratio: 4/3;
+  border: 0.5px solid rgba(212,196,168,0.1);
+  background: rgba(212,196,168,0.04);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; margin-bottom: 1.25rem;
+  position: relative; overflow: hidden;
+}
+.ex-img-bg {
+  position: absolute; inset: 0; opacity: .1;
+  background-image: repeating-linear-gradient(
+    45deg, var(--sand) 0, var(--sand) 1px, transparent 0, transparent 50%
+  );
+  background-size: 10px 10px;
+}
+.ex-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--cream); margin-bottom: .5rem; }
+.ex-desc { font-family: 'Noto Serif TC', serif; font-size: 12px; line-height: 1.9; color: var(--muted); }
+.ex-tag {
+  display: inline-block; margin-top: 1rem;
+  font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  border: 0.5px solid rgba(212,196,168,0.18); color: var(--sand);
+  padding: 3px 10px;
+}
+
+/* ────────────────────────────────────────────
+   PAGE 3 — PARTNERS
+──────────────────────────────────────────── */
+.p3-header {
+  padding: 5rem 3.5rem 3rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+  border-bottom: 0.5px solid rgba(212,196,168,0.12);
+}
+.p3-title { font-size: clamp(2rem, 3vw, 2.8rem); }
+.p3-intro {
+  display: flex; align-items: center;
+  font-family: 'Noto Serif TC', serif; font-size: 14px; line-height: 2.1; color: var(--sand);
+}
+.partner-cards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; background: rgba(212,196,168,0.08);
+  margin: 2px;
+}
+.partner-card { background: var(--charcoal); padding: 2.5rem; transition: background .2s; }
+.partner-card:hover { background: rgba(212,196,168,0.03); }
+.partner-logo {
+  font-family: 'DM Serif Display', serif; font-size: 1.7rem; color: var(--cream);
+  letter-spacing: -.01em; margin-bottom: 4px;
+}
+.partner-logo sup { font-size: .45em; color: var(--toast); font-family: 'DM Mono', monospace; }
+.partner-type {
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--toast);
+  padding-bottom: 1rem; margin-bottom: 1.25rem;
+  border-bottom: 0.5px solid rgba(212,196,168,0.1);
+}
+.partner-desc {
+  font-family: 'Noto Serif TC', serif; font-size: 13px; line-height: 2; color: var(--muted);
+}
+.partner-meta {
+  margin-top: 1.5rem; display: flex; gap: 1.5rem;
+  font-size: 10px; letter-spacing: 0.15em; color: var(--sand);
+}
+.cafes-section { padding: 3rem 3.5rem; }
+.cafe-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 0.5px solid rgba(212,196,168,0.12); margin-top: 1.5rem;
+}
+.cafe-item {
+  padding: 1.5rem 1.75rem;
+  border-right: 0.5px solid rgba(212,196,168,0.12);
+  transition: background .2s;
+}
+.cafe-item:last-child { border-right: none; }
+.cafe-item:hover { background: rgba(212,196,168,0.03); }
+.cafe-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--cream); margin-bottom: 4px; }
+.cafe-area { font-size: 9px; letter-spacing: 0.22em; color: var(--toast); margin-bottom: .75rem; }
+.cafe-items { font-size: 11px; color: var(--muted); line-height: 1.8; }
+
+/* ────────────────────────────────────────────
+   PAGE 4 — ABOUT
+──────────────────────────────────────────── */
+.p4-layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 60px); }
+.p4-sidebar {
+  padding: 4rem 2rem;
+  border-right: 0.5px solid rgba(212,196,168,0.12);
+  display: flex; flex-direction: column; gap: 3rem;
+}
+.p4-main { padding: 4rem 3.5rem; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.stat-cell { text-align: center; }
+.stat-n { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--toast); display: block; }
+.stat-l { font-size: 9px; letter-spacing: 0.2em; color: var(--muted); }
+.timeline { margin-top: 1.75rem; }
+.tl-item {
+  display: grid; grid-template-columns: 72px 1fr; gap: 1.5rem;
+  padding: 1.25rem 0;
+  border-bottom: 0.5px solid rgba(212,196,168,0.1);
+}
+.tl-date { font-size: 10px; letter-spacing: 0.15em; color: var(--toast); padding-top: 2px; }
+.tl-title { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--cream); margin-bottom: 4px; }
+.tl-desc { font-family: 'Noto Serif TC', serif; font-size: 12px; color: var(--muted); line-height: 1.8; }
+.rules { margin-top: 3rem; }
+.rule-item {
+  display: grid; grid-template-columns: 28px 1fr; gap: .75rem; align-items: start;
+  padding: 1rem 0;
+  border-bottom: 0.5px solid rgba(212,196,168,0.1);
+}
+.rule-n { font-size: 10px; color: var(--toast); padding-top: 2px; }
+.rule-t { font-family: 'Noto Serif TC', serif; font-size: 13px; color: var(--sand); line-height: 1.9; }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 1.75rem 2.5rem;
+  border-top: 0.5px solid rgba(212,196,168,0.12);
+  display: flex; justify-content: space-between; align-items: center;
+}
+footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
+
+/* ─── LOADING SPINNER ─── */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 1.5px solid rgba(212,196,168,0.2);
+  border-top-color: var(--toast);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── STEP INDICATOR ─── */
+.steps { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+.step-dot { width: 20px; height: 3px; background: rgba(212,196,168,0.15); transition: background .3s; }
+.step-dot.active { background: var(--toast); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { gap: 1.2rem; }
+  .p1-hero { grid-template-columns: 1fr; }
+  .p1-left { padding: 3rem 1.5rem 2rem; border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
+  .p1-right { padding: 2rem 1.5rem 3rem; }
+  .p2-hero, .p3-header { padding: 3rem 1.5rem; }
+  .p2-body { column-count: 1; }
+  .p3-header { grid-template-columns: 1fr; gap: 1.5rem; }
+  .exhibit-grid { grid-template-columns: 1fr; }
+  .exhibit-item { border-right: none; }
+  .partner-cards { grid-template-columns: 1fr; }
+  .cafe-grid { grid-template-columns: 1fr; }
+  .cafe-item { border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
+  .p4-layout { grid-template-columns: 1fr; }
+  .p4-sidebar { border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
+  footer { flex-direction: column; gap: .5rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAV
+════════════════════════════════════════════ -->
+<nav>
+  <div class="logo">
+    IMPERFECT
+    <small>× Restyle 2050</small>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('scan', this)">抽獎 / 會員</button>
+    <button class="nav-link" onclick="showPage('manifesto', this)">世代宣言</button>
+    <button class="nav-link" onclick="showPage('partners', this)">合作品牌</button>
+    <button class="nav-link" onclick="showPage('about', this)">關於活動</button>
+  </div>
+  <div class="nav-user" id="nav-user">
+    <!-- JS renders login state here -->
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 1 — MEMBER / SCAN
+════════════════════════════════════════════ -->
+<div class="page active" id="page-scan">
+  <div class="p1-hero">
+    <div class="p1-left">
+      <div class="eyebrow">× Restyle 2050 × 咖啡廳聯名限定</div>
+      <h1 class="sec-title p1-title">
+        不<span class="strike">完美</span><br>
+        也<span class="italic">沒關係</span>
+      </h1>
+      <p class="p1-desc">
+        這個世代追求極致完美，但我們相信，每一道刮痕、每一個瑕疵，都是故事的一部分。掃描咖啡廳 QR Code，累積里程，解鎖專屬抽獎機會。
+      </p>
+      <div class="p1-cta" id="hero-cta">
+        <button class="btn-join" onclick="openModal('register')">掃碼加入會員</button>
+        <button class="btn-login" onclick="openModal('login')">已有帳號登入</button>
+      </div>
+    </div>
+
+    <div class="p1-right" id="p1-right-panel">
+      <!-- JS renders member card OR guest card -->
+      <div class="guest-card">
+        <p>加入本次限定會員，<br>透過掃碼在各咖啡廳累積里程，<br>兌換抽獎次數。</p>
+        <button class="btn-join" style="display:inline-block;padding:12px 28px;" onclick="openModal('register')">立即加入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 2 — MANIFESTO
+════════════════════════════════════════════ -->
+<div class="page" id="page-manifesto">
+  <div class="p2-hero">
+    <div class="p2-bg-num">∅</div>
+    <div class="eyebrow">世代宣言 — 線上展覽</div>
+    <h2 class="sec-title p2-title">
+      完美，是<br>
+      <span class="line2">最沉重的枷鎖</span>
+    </h2>
+    <p class="p2-body">
+      我們生活在一個修圖比現實更真實的時代，每一個展示出來的自我都是精心篩選過的版本。Restyle 2050 相信，那些在倉庫裡等待報廢的「不完美品」，和那些每天努力活著卻覺得自己還不夠好的人，其實沒有什麼不同。每一道刮痕都是生命的刻度。
+    </p>
+  </div>
+  <div class="exhibit-grid">
+    <div class="exhibit-item">
+      <div class="ex-num">展品 01</div>
+      <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">⊙</span></div>
+      <div class="ex-title">表面的裂痕</div>
+      <div class="ex-desc">這台烤麵包機的外殼有一道輕微刮傷。它的加熱功能完好無缺。但它被貼上了「瑕疵品」的標籤。</div>
+      <span class="ex-tag">電器 / 身份認同</span>
+    </div>
+    <div class="exhibit-item">
+      <div class="ex-num">展品 02</div>
+      <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">◎</span></div>
+      <div class="ex-title">不對稱的美</div>
+      <div class="ex-desc">顏色輕微偏差的手持攪拌機。在日本有個詞叫「侘寂」，描述那種不完整之中的美感。</div>
+      <span class="ex-tag">美學 / 接納</span>
+    </div>
+    <div class="exhibit-item">
+      <div class="ex-num">展品 03</div>
+      <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">✧</span></div>
+      <div class="ex-title">功能凌駕外形</div>
+      <div class="ex-desc">包裝凹陷的空氣清淨機。在運輸中的顛簸讓它的外盒留下痕跡，裡面的濾芯從未被觸碰。</div>
+      <span class="ex-tag">永續 / 價值重估</span>
+    </div>
+    <div class="exhibit-item">
+      <div class="ex-num">展品 04</div>
+      <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">⬡</span></div>
+      <div class="ex-title">焦慮的世代</div>
+      <div class="ex-desc">一份問卷，關於你今天有幾次因為「不夠完美」而感到羞愧。數字會讓你意外。</div>
+      <span class="ex-tag">互動裝置 / 數據</span>
+    </div>
+    <div class="exhibit-item">
+      <div class="ex-num">展品 05</div>
+      <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">⟁</span></div>
+      <div class="ex-title">2050 的承諾</div>
+      <div class="ex-desc">Restyle 2050 的願景：在 2050 年以前，讓每一件有功能的商品都找到它的第二個家。</div>
+      <span class="ex-tag">品牌 / 未來</span>
+    </div>
+    <div class="exhibit-item">
+      <div class="ex-num">展品 06</div>
+      <div class="ex-img"><div class="ex-img-bg"></div><span style="position:relative;z-index:1;">∞</span></div>
+      <div class="ex-title">你也是展品</div>
+      <div class="ex-desc">掃描 QR Code，上傳你身上一個「不完美」的部分，成為這個展覽的一部分。</div>
+      <span class="ex-tag">參與式藝術</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 3 — PARTNERS
+════════════════════════════════════════════ -->
+<div class="page" id="page-partners">
+  <div class="p3-header">
+    <div>
+      <div class="eyebrow">合作品牌介紹</div>
+      <h2 class="sec-title p3-title">共同說出<br>不完美的故事</h2>
+    </div>
+    <div class="p3-intro">
+      恆隆行旗下品牌 Restyle 2050 與多家精選咖啡廳攜手，透過實體空間展示整新品電器，讓每一杯咖啡都成為一個反思的契機。
+    </div>
+  </div>
+  <div class="partner-cards">
+    <div class="partner-card">
+      <div class="partner-logo">恆隆行<sup>Corser</sup></div>
+      <div class="partner-type">主要品牌夥伴</div>
+      <p class="partner-desc">台灣最具代表性的生活家電代理商，以美學與品質著稱。恆隆行的展廳設計向來是業界美學標竿，此次以母公司身份支持 Restyle 2050 的理念推廣。</p>
+      <div class="partner-meta"><span>成立 1978</span><span>代理 50+ 品牌</span></div>
+    </div>
+    <div class="partner-card">
+      <div class="partner-logo">Restyle<sup>2050</sup></div>
+      <div class="partner-type">聯名主辦品牌</div>
+      <p class="partner-desc">恆隆行旗下專注於整新品、二手家電的永續子品牌。核心使命是重新定義「完美」，讓每一件有使用功能的商品都能延續其生命週期，減少電子廢棄物。</p>
+      <div class="partner-meta"><span>整新品認證</span><span>ESG 承諾</span></div>
+    </div>
+  </div>
+  <div class="cafes-section">
+    <div class="eyebrow">合作咖啡廳 — 展品陳列據點</div>
+    <div class="cafe-grid">
+      <div class="cafe-item">
+        <div class="cafe-name">Café A</div>
+        <div class="cafe-area">大安區</div>
+        <div class="cafe-items">空氣清淨機、手沖套組</div>
+      </div>
+      <div class="cafe-item">
+        <div class="cafe-name">Café B</div>
+        <div class="cafe-area">信義區</div>
+        <div class="cafe-items">烤麵包機、手持攪拌機</div>
+      </div>
+      <div class="cafe-item">
+        <div class="cafe-name">Café C</div>
+        <div class="cafe-area">中山區</div>
+        <div class="cafe-items">咖啡機、電動磨豆機</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE 4 — ABOUT
+════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="p4-layout">
+    <div class="p4-sidebar">
+      <div>
+        <div class="eyebrow">關於活動</div>
+        <h2 class="sec-title" style="font-size:2rem;margin-top:.5rem;">不完美<br>也沒關係</h2>
+        <p style="font-family:'Noto Serif TC',serif;font-size:12px;color:var(--muted);line-height:2;margin-top:1.25rem;">
+          2025 年春季限定聯名快閃活動，橫跨三家咖啡廳，結合線上展覽與實體體驗。
+        </p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-cell"><span class="stat-n">3</span><span class="stat-l">合作咖啡廳</span></div>
+        <div class="stat-cell"><span class="stat-n">12</span><span class="stat-l">展示電器</span></div>
+        <div class="stat-cell"><span class="stat-n">6</span><span class="stat-l">線上展品</span></div>
+        <div class="stat-cell"><span class="stat-n">∞</span><span class="stat-l">不完美故事</span></div>
+      </div>
+    </div>
+    <div class="p4-main">
+      <div class="eyebrow">活動時程</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">05.01</div>
+          <div><div class="tl-title">活動正式開跑</div><div class="tl-desc">三家咖啡廳同步啟動，QR Code 掃碼系統上線，會員登記開始</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">05.08</div>
+          <div><div class="tl-title">線上展覽開幕</div><div class="tl-desc">六件數位展品正式上線，參與互動裝置可獲得額外里程</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">05.15</div>
+          <div><div class="tl-title">期中抽獎</div><div class="tl-desc">第一輪抽獎，獎品包含 Restyle 2050 整新品電器</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">05.31</div>
+          <div><div class="tl-title">活動截止 / 大抽獎</div><div class="tl-desc">最終抽獎，本活動里程系統同步關閉</div></div>
+        </div>
+      </div>
+      <div class="rules" style="margin-top:2.5rem;">
+        <div class="eyebrow">抽獎規則</div>
+        <div class="rule-item"><div class="rule-n">01</div><div class="rule-t">每次掃碼獲得 30 里程，每家咖啡廳每日上限 3 次</div></div>
+        <div class="rule-item"><div class="rule-n">02</div><div class="rule-t">每晚午夜 00:00，各店掃碼次數自動重置，累積里程保留不清空</div></div>
+        <div class="rule-item"><div class="rule-n">03</div><div class="rule-t">每累積 60 里程自動兌換 1 次抽獎機會，無上限</div></div>
+        <div class="rule-item"><div class="rule-n">04</div><div class="rule-t">分享活動貼文並 tag @restyle2050，可獲得 20 里程獎勵</div></div>
+        <div class="rule-item"><div class="rule-n">05</div><div class="rule-t">活動結束後里程歸零，不可兌換其他獎勵或轉讓</div></div>
+        <div class="rule-item"><div class="rule-n">06</div><div class="rule-t">得獎者將於活動結束後 7 個工作日內以 email 通知</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <p>© 2025 Restyle 2050 × Imperfect Campaign</p>
+  <p>本活動為期間限定會員制度，活動結束後帳號自動關閉</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════ -->
+
+<!-- Register Modal -->
+<div class="modal-overlay" id="modal-register">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register')">✕</button>
+    <div class="modal-tag">加入會員 — 限定活動</div>
+    <h2>成為不完美會員</h2>
+    <p>填寫資料後，系統將發送驗證碼至您的手機。</p>
+
+    <div class="steps">
+      <div class="step-dot active" id="reg-step-1"></div>
+      <div class="step-dot" id="reg-step-2"></div>
+    </div>
+
+    <!-- Step 1: Basic info + phone -->
+    <div id="reg-s1">
+      <div class="form-group">
+        <label class="form-label">姓名</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="王小明" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">手機號碼</label>
+        <div class="otp-row">
+          <input class="form-input" id="reg-phone" type="tel" placeholder="0912345678" autocomplete="tel">
+          <button class="btn-send-otp" id="reg-send-otp" onclick="sendOTP()">發送驗證碼</button>
+        </div>
+        <div id="reg-phone-err" class="form-error" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div id="reg-s2" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">驗證碼（已發送至 <span id="reg-phone-display"></span>）</label>
+        <input class="form-input" id="reg-otp" type="text" placeholder="6 位數字" maxlength="6" inputmode="numeric">
+        <div id="reg-otp-err" class="form-error" style="display:none;"></div>
+        <div id="reg-otp-ok" class="form-success" style="display:none;"></div>
+      </div>
+      <button class="btn-ghost-sm" onclick="backToStep1()" style="margin-bottom:0;">← 返回修改</button>
+    </div>
+
+    <button class="btn-primary" id="reg-btn" onclick="handleRegister()">發送驗證碼</button>
+    <div id="reg-general-err" class="form-error" style="display:none;margin-top:.75rem;"></div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <div class="modal-tag">會員登入</div>
+    <h2>歡迎回來</h2>
+    <p>輸入您的 Email，系統將發送驗證碼登入。</p>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="login-email" type="email" placeholder="your@email.com">
+    </div>
+    <div class="form-group" id="login-otp-group" style="display:none;">
+      <label class="form-label">驗證碼</label>
+      <input class="form-input" id="login-otp" type="text" placeholder="6 位數字" maxlength="6" inputmode="numeric">
+      <div id="login-err" class="form-error" style="display:none;"></div>
+    </div>
+    <button class="btn-primary" id="login-btn" onclick="handleLogin()">發送驗證碼</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+// ──────────────────────────────────────────
+// CONFIG — 填入你的 Supabase 資訊
+// ──────────────────────────────────────────
+const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co'
+const SUPABASE_ANON = 'YOUR_ANON_KEY'
+
+const { createClient } = supabase
+const db = createClient(SUPABASE_URL, SUPABASE_ANON)
+
+// ──────────────────────────────────────────
+// APP STATE
+// ──────────────────────────────────────────
+let currentMember = null  // { id, name, email, phone, total_miles, draw_tickets }
+let locations     = []    // from DB
+let dailyScans    = {}    // { location_id: scan_count }
+let regStep       = 1     // 1 = fill info, 2 = verify OTP
+
+// ──────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────
+async function init() {
+  // Restore session from localStorage
+  const saved = localStorage.getItem('imperfect_member_id')
+  if (saved) {
+    await loadMember(saved)
+  }
+  await loadLocations()
+  renderNavUser()
+  renderRightPanel()
+  startResetCountdown()
+
+  // Handle QR scan: ?scan=cafe-a-daan
+  const params = new URLSearchParams(location.search)
+  const scanKey = params.get('scan')
+  if (scanKey && currentMember) {
+    await processScan(scanKey)
+  } else if (scanKey && !currentMember) {
+    // Prompt register, remember the scan intent
+    sessionStorage.setItem('pending_scan', scanKey)
+    openModal('register')
+  }
+}
+
+async function loadMember(id) {
+  const { data, error } = await db
+    .from('members')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (data && !error) {
+    currentMember = data
+    localStorage.setItem('imperfect_member_id', data.id)
+  } else {
+    localStorage.removeItem('imperfect_member_id')
+  }
+}
+
+async function loadLocations() {
+  const { data } = await db.from('locations').select('*').eq('active', true)
+  if (data) locations = data
+  if (currentMember) await loadDailyScans()
+}
+
+async function loadDailyScans() {
+  if (!currentMember) return
+  const today = new Date().toISOString().slice(0,10)
+  const { data } = await db
+    .from('daily_scan_limits')
+    .select('location_id, scan_count')
+    .eq('member_id', currentMember.id)
+    .eq('scan_date', today)
+  dailyScans = {}
+  if (data) data.forEach(r => { dailyScans[r.location_id] = r.scan_count })
+}
+
+// ──────────────────────────────────────────
+// PAGE NAVIGATION
+// ──────────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
+  document.getElementById('page-' + id).classList.add('active')
+  if (btn) btn.classList.add('active')
+}
+
+// ──────────────────────────────────────────
+// RENDER
+// ──────────────────────────────────────────
+function renderNavUser() {
+  const el = document.getElementById('nav-user')
+  if (currentMember) {
+    el.innerHTML = `
+      <span>Hi, ${currentMember.name.split('')[0]}***</span>
+      <span class="nav-miles">${currentMember.total_miles} mi</span>
+      <button class="btn-ghost-sm" onclick="logout()" style="font-size:9px;padding:5px 10px;">登出</button>
+    `
+  } else {
+    el.innerHTML = `<button class="btn-ghost-sm" onclick="openModal('login')">登入</button>`
+  }
+}
+
+function renderRightPanel() {
+  const el = document.getElementById('p1-right-panel')
+  if (!currentMember) {
+    el.innerHTML = `
+      <div class="guest-card">
+        <p>加入本次限定會員，<br>透過掃碼在各咖啡廳累積里程，<br>兌換抽獎次數。</p>
+        <button class="btn-join" style="display:inline-block;padding:12px 28px;" onclick="openModal('register')">立即加入</button>
+      </div>
+    `
+    return
+  }
+
+  const m = currentMember
+  const pct = Math.min((m.total_miles / 500) * 100, 100).toFixed(1)
+  const nextMilestone = Math.ceil(m.total_miles / 60) * 60
+  const toNext = nextMilestone - m.total_miles
+
+  const locCards = locations.map(loc => {
+    const count = dailyScans[loc.id] || 0
+    const remaining = 3 - count
+    const maxed = remaining <= 0
+    return `
+      <div class="loc-card">
+        <span class="loc-remaining ${maxed ? 'maxed' : ''}">${maxed ? '已達上限' : `剩 ${remaining} 次`}</span>
+        <div class="loc-icon">☕</div>
+        <div class="loc-name">${loc.name}</div>
+        <div class="loc-sub">${loc.district} · ${loc.items}</div>
+      </div>
+    `
+  }).join('')
+
+  el.innerHTML = `
+    <div class="member-card">
+      <span class="member-card-tag">Imperfect Member</span>
+      <div class="member-id">ID #${m.id.slice(0,8).toUpperCase()}</div>
+      <div class="member-name">${m.name}</div>
+      <div class="mile-header">
+        <span class="mile-label">里程累積</span>
+        <span class="mile-fraction">${m.total_miles} mi</span>
+      </div>
+      <div class="mile-bar"><div class="mile-fill" style="width:${pct}%"></div></div>
+      <div class="miles-big">${m.total_miles}</div>
+      <div class="miles-unit">Imperfect Miles</div>
+    </div>
+
+    <div class="locations-grid">${locCards}</div>
+
+    <div class="draw-box">
+      <div class="draw-left">
+        <div class="draw-count">${m.draw_tickets}</div>
+        <div class="draw-label">可用抽獎次數</div>
+      </div>
+      <div class="draw-right">
+        <div class="draw-note">每 60 里程兌換 1 次<br>距下次還差 ${toNext} mi</div>
+      </div>
+    </div>
+
+    <div class="reset-bar">
+      <div class="dot"></div>
+      <span>各店次數將於午夜重置，剩</span>
+      <span class="reset-time" id="reset-countdown"></span>
+    </div>
+  `
+  startResetCountdown()
+}
+
+// ──────────────────────────────────────────
+// COUNTDOWN TO MIDNIGHT
+// ──────────────────────────────────────────
+function startResetCountdown() {
+  function tick() {
+    const el = document.getElementById('reset-countdown')
+    if (!el) return
+    const now = new Date()
+    const midnight = new Date()
+    midnight.setHours(24, 0, 0, 0)
+    const diff = midnight - now
+    const h = String(Math.floor(diff / 3600000)).padStart(2,'0')
+    const min = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0')
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0')
+    el.textContent = `${h}:${min}:${s}`
+  }
+  tick()
+  setInterval(tick, 1000)
+}
+
+// ──────────────────────────────────────────
+// QR SCAN PROCESSING
+// ──────────────────────────────────────────
+async function processScan(qrKey) {
+  const loc = locations.find(l => l.qr_code_key === qrKey)
+  if (!loc) { showToast('無效的 QR Code', true); return }
+
+  const { data, error } = await db.rpc('scan_and_earn', {
+    p_member_id:   currentMember.id,
+    p_location_id: loc.id,
+    p_miles:       30,
+    p_daily_limit: 3
+  })
+
+  if (error) { showToast('系統錯誤，請稍後再試', true); return }
+
+  if (!data.success) {
+    showToast(data.message, true)
+  } else {
+    currentMember.total_miles  = data.total_miles
+    currentMember.draw_tickets = data.draw_tickets
+    dailyScans[loc.id] = data.scans_today
+    renderNavUser()
+    renderRightPanel()
+    showToast(`+${data.miles_earned} 里程！今日 ${loc.name} 還剩 ${data.scans_remaining} 次`)
+  }
+
+  // Clear URL param
+  history.replaceState({}, '', location.pathname)
+}
+
+// ──────────────────────────────────────────
+// REGISTER FLOW
+// ──────────────────────────────────────────
+async function sendOTP() {
+  const phone = document.getElementById('reg-phone').value.trim()
+  if (!phone.match(/^09\d{8}$/)) {
+    showErr('reg-phone-err', '請輸入正確的台灣手機號碼（09xxxxxxxx）')
+    return
+  }
+  hideErr('reg-phone-err')
+
+  const btn = document.getElementById('reg-send-otp')
+  btn.disabled = true; btn.textContent = '發送中...'
+
+  // Generate 6-digit OTP and store in Supabase (via service function)
+  const code = String(Math.floor(100000 + Math.random() * 900000))
+  const { error } = await db.from('otp_verifications').insert({
+    phone, code,
+    expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  })
+
+  if (error) {
+    showErr('reg-phone-err', '發送失敗，請稍後再試')
+    btn.disabled = false; btn.textContent = '發送驗證碼'
+    return
+  }
+
+  // In production: call your SMS API edge function here
+  // await fetch('/api/send-sms', { method: 'POST', body: JSON.stringify({ phone, code }) })
+  console.log('[DEV] OTP:', code) // ← 開發時從 console 取得
+
+  // Move to step 2
+  document.getElementById('reg-phone-display').textContent = phone
+  document.getElementById('reg-s1').style.display = 'none'
+  document.getElementById('reg-s2').style.display = 'block'
+  document.getElementById('reg-step-1').classList.add('active')
+  document.getElementById('reg-step-2').classList.add('active')
+  document.getElementById('reg-btn').textContent = '確認驗證碼並加入'
+  regStep = 2
+
+  // Countdown resend
+  let seconds = 60
+  const interval = setInterval(() => {
+    seconds--
+    btn.textContent = `${seconds}s 後重新發送`
+    if (seconds <= 0) {
+      clearInterval(interval)
+      btn.disabled = false; btn.textContent = '重新發送'
+    }
+  }, 1000)
+}
+
+async function handleRegister() {
+  if (regStep === 1) { sendOTP(); return }
+
+  const name  = document.getElementById('reg-name').value.trim()
+  const email = document.getElementById('reg-email').value.trim()
+  const phone = document.getElementById('reg-phone').value.trim()
+  const otp   = document.getElementById('reg-otp').value.trim()
+
+  if (!name || !email || !phone || !otp) {
+    showErr('reg-otp-err', '請填寫所有欄位'); return
+  }
+
+  const btn = document.getElementById('reg-btn')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+
+  // Verify OTP
+  const { data: otpRow } = await db
+    .from('otp_verifications')
+    .select('*')
+    .eq('phone', phone)
+    .eq('code', otp)
+    .eq('used', false)
+    .gte('expires_at', new Date().toISOString())
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (!otpRow) {
+    showErr('reg-otp-err', '驗證碼錯誤或已過期')
+    btn.disabled = false; btn.textContent = '確認驗證碼並加入'
+    return
+  }
+
+  // Mark OTP used
+  await db.from('otp_verifications').update({ used: true }).eq('id', otpRow.id)
+
+  // Create member
+  const { data: member, error } = await db
+    .from('members')
+    .insert({ name, email, phone })
+    .select()
+    .single()
+
+  if (error) {
+    if (error.code === '23505') {
+      showErr('reg-general-err', '此 Email 已經註冊過，請直接登入')
+    } else {
+      showErr('reg-general-err', '註冊失敗，請稍後再試')
+    }
+    btn.disabled = false; btn.textContent = '確認驗證碼並加入'
+    return
+  }
+
+  currentMember = member
+  localStorage.setItem('imperfect_member_id', member.id)
+  await loadLocations()
+  closeModal('register')
+  renderNavUser()
+  renderRightPanel()
+  showToast('歡迎加入不完美會員！')
+
+  // Handle pending scan
+  const pending = sessionStorage.getItem('pending_scan')
+  if (pending) { sessionStorage.removeItem('pending_scan'); await processScan(pending) }
+}
+
+function backToStep1() {
+  document.getElementById('reg-s1').style.display = 'block'
+  document.getElementById('reg-s2').style.display = 'none'
+  document.getElementById('reg-step-2').classList.remove('active')
+  document.getElementById('reg-btn').textContent = '發送驗證碼'
+  regStep = 1
+}
+
+// ──────────────────────────────────────────
+// LOGIN FLOW (email-based OTP lookup)
+// ──────────────────────────────────────────
+let loginStep = 1
+
+async function handleLogin() {
+  const btn = document.getElementById('login-btn')
+
+  if (loginStep === 1) {
+    const email = document.getElementById('login-email').value.trim()
+    if (!email.includes('@')) { return }
+
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+
+    const { data: member } = await db
+      .from('members').select('*').eq('email', email).single()
+
+    if (!member) {
+      btn.disabled = false; btn.textContent = '發送驗證碼'
+      showErr('login-err', '找不到此 Email 的會員')
+      document.getElementById('login-otp-group').style.display = 'block'
+      return
+    }
+
+    // Send OTP to their phone
+    const code = String(Math.floor(100000 + Math.random() * 900000))
+    await db.from('otp_verifications').insert({
+      phone: member.phone, code,
+      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
+    })
+    console.log('[DEV] Login OTP:', code)
+
+    loginStep = 2
+    document.getElementById('login-otp-group').style.display = 'block'
+    btn.disabled = false; btn.textContent = '確認登入'
+    document.getElementById('login-btn').setAttribute('data-email', email)
+    return
+  }
+
+  // Step 2: verify
+  const email = document.getElementById('login-email').value.trim()
+  const otp   = document.getElementById('login-otp').value.trim()
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+
+  const { data: member } = await db.from('members').select('*').eq('email', email).single()
+  const { data: otpRow  } = await db
+    .from('otp_verifications')
+    .select('*')
+    .eq('phone', member?.phone || '')
+    .eq('code', otp).eq('used', false)
+    .gte('expires_at', new Date().toISOString())
+    .order('created_at', { ascending: false })
+    .limit(1).single()
+
+  if (!otpRow || !member) {
+    showErr('login-err', '驗證碼錯誤或已過期')
+    btn.disabled = false; btn.textContent = '確認登入'
+    return
+  }
+
+  await db.from('otp_verifications').update({ used: true }).eq('id', otpRow.id)
+  currentMember = member
+  localStorage.setItem('imperfect_member_id', member.id)
+  await loadLocations()
+  closeModal('login')
+  loginStep = 1
+  renderNavUser()
+  renderRightPanel()
+  showToast(`歡迎回來，${member.name}！`)
+}
+
+// ──────────────────────────────────────────
+// LOGOUT
+// ──────────────────────────────────────────
+function logout() {
+  currentMember = null
+  localStorage.removeItem('imperfect_member_id')
+  dailyScans = {}
+  renderNavUser()
+  renderRightPanel()
+}
+
+// ──────────────────────────────────────────
+// MODAL HELPERS
+// ──────────────────────────────────────────
+function openModal(id) {
+  document.getElementById('modal-' + id).classList.add('open')
+  document.body.style.overflow = 'hidden'
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('open')
+  document.body.style.overflow = ''
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => {
+    if (e.target === o) {
+      const id = o.id.replace('modal-', '')
+      closeModal(id)
+    }
+  })
+})
+
+// ──────────────────────────────────────────
+// TOAST & ERROR HELPERS
+// ──────────────────────────────────────────
+let toastTimer
+function showToast(msg, isError = false) {
+  const el = document.getElementById('toast')
+  el.textContent = msg
+  el.className = 'toast show' + (isError ? ' error' : '')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { el.classList.remove('show') }, 3000)
+}
+function showErr(id, msg) {
+  const el = document.getElementById(id)
+  el.textContent = msg; el.style.display = 'block'
+}
+function hideErr(id) {
+  document.getElementById(id).style.display = 'none'
+}
+
+// ──────────────────────────────────────────
+// BOOT
+// ──────────────────────────────────────────
+init()
+</script>
+</body>
+</html>
