@@ -871,7 +871,6 @@ function renderNavUser() {
   if (currentMember) {
     el.innerHTML = `
       <span>Hi, ${escapeHtml(maskName(currentMember.name))}</span>
-      <span class="nav-miles">${currentMember.draw_tickets} 次機會</span>
       <button class="btn-ghost-sm" onclick="logout()" style="font-size:9px;padding:5px 10px;">登出</button>
     `
   } else {
@@ -942,7 +941,6 @@ function renderRightPanel() {
       <div class="member-email">${escapeHtml(m.email)}</div>
       <div class="mile-header">
         <span class="mile-label">已累計抽獎機會</span>
-        <span class="mile-fraction">${m.draw_tickets} 次</span>
       </div>
       <div class="miles-big">${m.draw_tickets}</div>
       <div class="miles-unit">DRAW ENTRIES</div>
@@ -951,11 +949,7 @@ function renderRightPanel() {
     <div class="locations-grid">${locCards || ''}</div>
 
     <div class="draw-box">
-      <div class="draw-left">
-        <div class="draw-count">${m.draw_tickets}</div>
-        <div class="draw-label">目前累計抽獎機會</div>
-      </div>
-      <div class="draw-right">
+      <div class="draw-right" style="width:100%; text-align:left;">
         <div class="draw-note">${drawCountdownText}<br>大獎：${GRAND_PRIZE}</div>
       </div>
     </div>
