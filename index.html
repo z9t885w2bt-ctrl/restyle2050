@@ -244,13 +244,119 @@ nav {
 .member-id { font-size: 10px; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 4px; }
 .member-name { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--cream); margin-bottom: 1.25rem; }
 .member-email { font-size: 10px; color: var(--muted); margin-bottom: 1rem; }
-.mile-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.mile-label { font-size: 9px; letter-spacing: 0.2em; color: var(--muted); }
-.mile-fraction { font-size: 10px; color: var(--sand); }
-.mile-bar { height: 2.5px; background: rgba(212,196,168,0.12); margin-bottom: 1rem; }
-.mile-fill { height: 100%; background: var(--toast); transition: width .7s cubic-bezier(.4,0,.2,1); }
-.miles-big { font-family: 'DM Serif Display', serif; font-size: 2.6rem; color: var(--toast); }
-.miles-unit { font-size: 9px; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; }
+.mile-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.mile-label { font-size: 9px; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; }
+.miles-big { font-family: 'DM Serif Display', serif; font-size: clamp(3.2rem, 6vw, 5rem); color: var(--toast); line-height: .92; }
+.miles-unit { font-size: 9px; letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase; margin-top: 8px; }
+
+.countdown-hero {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.25rem 1.1rem;
+  border: 0.5px solid rgba(193,127,58,0.28);
+  background: linear-gradient(180deg, rgba(193,127,58,0.10) 0%, rgba(193,127,58,0.03) 100%);
+}
+.countdown-kicker {
+  font-size: 9px; letter-spacing: 0.28em; color: var(--sand); text-transform: uppercase;
+  margin-bottom: .7rem;
+}
+.countdown-main {
+  display: flex; align-items: end; gap: 12px; flex-wrap: wrap;
+}
+.countdown-number {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(3.6rem, 7vw, 6rem);
+  line-height: .82;
+  color: var(--cream);
+}
+.countdown-copy {
+  padding-bottom: .45rem;
+}
+.countdown-title {
+  font-size: 1rem; letter-spacing: 0.14em; color: var(--cream);
+}
+.countdown-sub {
+  margin-top: .35rem;
+  font-size: 10px; letter-spacing: 0.12em; color: var(--sand); line-height: 1.8;
+}
+
+.activity-axis {
+  margin-top: 1.2rem;
+}
+.axis-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; color: var(--muted); letter-spacing: 0.1em;
+  margin-bottom: .75rem;
+  gap: 1rem;
+}
+.axis-status {
+  color: var(--toast);
+}
+.axis-track-wrap {
+  position: relative;
+  padding: 24px 0 20px;
+}
+.axis-track {
+  position: relative;
+  height: 4px;
+  background: rgba(212,196,168,0.14);
+  overflow: visible;
+}
+.axis-track::before,
+.axis-track::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  border: 2px solid var(--sand);
+  background: var(--charcoal);
+}
+.axis-track::before { left: -1px; }
+.axis-track::after {
+  right: -1px;
+  border-color: var(--toast);
+  box-shadow: 0 0 0 4px rgba(193,127,58,0.12);
+}
+.axis-progress {
+  position: absolute; inset: 0 auto 0 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(212,196,168,0.55) 0%, var(--toast) 100%);
+}
+.axis-marker {
+  position: absolute;
+  top: 50%;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 3px solid var(--toast);
+  box-shadow: 0 0 0 6px rgba(193,127,58,0.12);
+  transform: translate(-50%, -50%);
+}
+.axis-marker-label {
+  position: absolute;
+  top: -2px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 9px; letter-spacing: 0.16em; color: var(--toast); text-transform: uppercase;
+}
+.axis-dates {
+  display: flex; justify-content: space-between; gap: 1rem;
+  font-size: 10px; color: var(--sand);
+}
+.axis-date strong {
+  display: block;
+  font-size: 11px; letter-spacing: 0.16em; color: var(--cream);
+  margin-bottom: 4px;
+}
+.axis-date:last-child {
+  text-align: right;
+}
+.axis-end-note {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 9px; letter-spacing: 0.12em; color: var(--toast);
+}
 
 .locations-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
@@ -274,18 +380,6 @@ nav {
   letter-spacing: 0.1em;
 }
 .loc-remaining.maxed { background: rgba(80,30,10,0.5); color: rgba(212,196,168,0.4); }
-
-.draw-box {
-  border: 0.5px solid rgba(139,69,19,0.4);
-  background: rgba(139,69,19,0.07);
-  padding: 1.25rem 1.5rem;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem;
-}
-.draw-left .draw-count { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--toast); }
-.draw-left .draw-label { font-size: 9px; letter-spacing: 0.22em; color: var(--muted); }
-.draw-right { text-align: right; }
-.draw-note { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; line-height: 1.7; }
 
 .guest-card {
   border: 0.5px dashed rgba(212,196,168,0.2);
@@ -470,6 +564,9 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
   .p2-body { column-count: 1; }
   .p3-header { grid-template-columns: 1fr; gap: 1.5rem; }
   .exhibit-grid, .partner-cards, .cafe-grid, .locations-grid { grid-template-columns: 1fr; }
+  .countdown-main { align-items: flex-start; }
+  .axis-meta, .axis-dates { flex-direction: column; align-items: flex-start; }
+  .axis-date:last-child { text-align: left; }
   .exhibit-item, .cafe-item { border-right: none; }
   .p4-layout { grid-template-columns: 1fr; }
   .p4-sidebar { border-right: none; border-bottom: 0.5px solid rgba(212,196,168,0.12); }
@@ -725,7 +822,8 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 <script>
 const SUPABASE_URL  = 'https://jndqxhabxwpudcxtowbc.supabase.co'
 const SUPABASE_ANON = 'sb_publishable_V_XPYc3hi9xrM5BdYPydvg_lb-EQtfM'
-const DRAW_DATE = '2026-05-31T23:59:59+08:00'
+const CAMPAIGN_START = '2026-05-04T00:00:00+08:00'
+const CAMPAIGN_END = '2026-06-14T23:59:59+08:00'
 const GRAND_PRIZE = 'Dyson 吹風機'
 
 const { createClient } = supabase
@@ -894,14 +992,72 @@ function renderHeroCTA() {
   `
 }
 
-function getDrawCountdownText() {
-  const drawDate = new Date(DRAW_DATE)
+function formatShortDate(dateString) {
+  const date = new Date(dateString)
+  return `${date.getMonth() + 1}/${date.getDate()}`
+}
+
+function getCampaignState() {
+  const start = new Date(CAMPAIGN_START)
+  const end = new Date(CAMPAIGN_END)
   const now = new Date()
-  const diff = drawDate.getTime() - now.getTime()
-  if (Number.isNaN(drawDate.getTime())) return '請先設定抽獎日期'
-  if (diff <= 0) return '抽獎日已到'
-  const days = Math.ceil(diff / 86400000)
-  return `倒數 ${days} 天抽獎`
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return {
+      headlineNumber: '--',
+      headlineTitle: '請先設定活動日期',
+      headlineSub: `活動期間 ${formatShortDate(CAMPAIGN_START)} — ${formatShortDate(CAMPAIGN_END)}`,
+      progressPct: 0,
+      axisStatus: '日期未設定',
+      markerLabel: '目前',
+      startLabel: formatShortDate(CAMPAIGN_START),
+      endLabel: formatShortDate(CAMPAIGN_END)
+    }
+  }
+
+  const total = Math.max(1, end.getTime() - start.getTime())
+  const rawProgress = ((now.getTime() - start.getTime()) / total) * 100
+  const progressPct = Math.max(0, Math.min(100, rawProgress))
+
+  if (now < start) {
+    const daysToStart = Math.ceil((start.getTime() - now.getTime()) / 86400000)
+    const daysToEnd = Math.ceil((end.getTime() - now.getTime()) / 86400000)
+    return {
+      headlineNumber: String(daysToEnd),
+      headlineTitle: '天後到終點',
+      headlineSub: `活動尚未開始・將於 ${formatShortDate(CAMPAIGN_START)} 開跑`,
+      progressPct: 0,
+      axisStatus: `開跑前 ${daysToStart} 天`,
+      markerLabel: '起跑前',
+      startLabel: formatShortDate(CAMPAIGN_START),
+      endLabel: formatShortDate(CAMPAIGN_END)
+    }
+  }
+
+  if (now > end) {
+    return {
+      headlineNumber: '0',
+      headlineTitle: '活動已截止',
+      headlineSub: `${formatShortDate(CAMPAIGN_END)} 已到站・大獎 ${GRAND_PRIZE}`,
+      progressPct: 100,
+      axisStatus: '已抵達終點',
+      markerLabel: '終點',
+      startLabel: formatShortDate(CAMPAIGN_START),
+      endLabel: formatShortDate(CAMPAIGN_END)
+    }
+  }
+
+  const daysLeft = Math.ceil((end.getTime() - now.getTime()) / 86400000)
+  return {
+    headlineNumber: String(daysLeft),
+    headlineTitle: '天後抽獎',
+    headlineSub: `終點 ${formatShortDate(CAMPAIGN_END)}・大獎 ${GRAND_PRIZE}`,
+    progressPct,
+    axisStatus: `活動進行中 ${Math.round(progressPct)}%`,
+    markerLabel: '你在這裡',
+    startLabel: formatShortDate(CAMPAIGN_START),
+    endLabel: formatShortDate(CAMPAIGN_END)
+  }
 }
 
 function renderRightPanel() {
@@ -917,7 +1073,7 @@ function renderRightPanel() {
   }
 
   const m = currentMember
-  const drawCountdownText = getDrawCountdownText()
+  const campaign = getCampaignState()
 
   const locCards = locations.map(loc => {
     const count = dailyScans[loc.id] || 0
@@ -943,16 +1099,48 @@ function renderRightPanel() {
         <span class="mile-label">已累計抽獎機會</span>
       </div>
       <div class="miles-big">${m.draw_tickets}</div>
-      <div class="miles-unit">DRAW ENTRIES</div>
+      <div class="miles-unit">Draw Entries</div>
+
+      <div class="countdown-hero">
+        <div class="countdown-kicker">活動終點正在靠近</div>
+        <div class="countdown-main">
+          <div class="countdown-number">${campaign.headlineNumber}</div>
+          <div class="countdown-copy">
+            <div class="countdown-title">${campaign.headlineTitle}</div>
+            <div class="countdown-sub">${campaign.headlineSub}</div>
+          </div>
+        </div>
+
+        <div class="activity-axis">
+          <div class="axis-meta">
+            <span>活動期間 ${campaign.startLabel} — ${campaign.endLabel}</span>
+            <span class="axis-status">${campaign.axisStatus}</span>
+          </div>
+
+          <div class="axis-track-wrap">
+            <div class="axis-marker-label" style="left:${campaign.progressPct}%;">${campaign.markerLabel}</div>
+            <div class="axis-track">
+              <div class="axis-progress" style="width:${campaign.progressPct}%;"></div>
+              <div class="axis-marker" style="left:${campaign.progressPct}%;"></div>
+            </div>
+          </div>
+
+          <div class="axis-dates">
+            <div class="axis-date">
+              <strong>${campaign.startLabel}</strong>
+              活動開始
+            </div>
+            <div class="axis-date">
+              <strong>${campaign.endLabel}</strong>
+              活動終點
+              <span class="axis-end-note">大獎：${GRAND_PRIZE}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="locations-grid">${locCards || ''}</div>
-
-    <div class="draw-box">
-      <div class="draw-right" style="width:100%; text-align:left;">
-        <div class="draw-note">${drawCountdownText}<br>大獎：${GRAND_PRIZE}</div>
-      </div>
-    </div>
 
     <div class="reset-bar">
       <div class="dot"></div>
