@@ -503,7 +503,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
       <p class="p1-desc">
         這個世代追求極致完美，但我們相信，每一道刮痕、每一個瑕疵，都是故事的一部分。掃描咖啡廳 QR Code，累積里程，解鎖專屬抽獎機會。
       </p>
-      <div class="p1-cta">
+      <div class="p1-cta" id="hero-cta">
         <button class="btn-join" onclick="openModal('register')">掃碼加入會員</button>
         <button class="btn-login" onclick="openModal('login')">已有帳號登入</button>
       </div>
@@ -742,6 +742,7 @@ async function init() {
 
   await loadLocations()
   renderNavUser()
+  renderHeroCTA()
   renderRightPanel()
   renderPartnersCafes()
   startResetCountdown()
@@ -764,6 +765,7 @@ async function init() {
     }
     await loadLocations()
     renderNavUser()
+    renderHeroCTA()
     renderRightPanel()
     renderPartnersCafes()
   })
@@ -846,6 +848,22 @@ function renderNavUser() {
   } else {
     el.innerHTML = `<button class="btn-ghost-sm" onclick="openModal('login')">登入</button>`
   }
+}
+
+function renderHeroCTA() {
+  const el = document.getElementById('hero-cta')
+  if (!el) return
+
+  if (currentMember) {
+    el.style.display = 'none'
+    return
+  }
+
+  el.style.display = 'flex'
+  el.innerHTML = `
+    <button class="btn-join" onclick="openModal('register')">掃碼加入會員</button>
+    <button class="btn-login" onclick="openModal('login')">已有帳號登入</button>
+  `
 }
 
 function renderRightPanel() {
@@ -978,6 +996,7 @@ async function processScan(qrKey) {
   }
 
   const { data, error } = await db.rpc('scan_and_earn', {
+    p_member_id: currentMember.id,
     p_location_id: loc.id,
     p_miles: 30,
     p_daily_limit: 3
@@ -1050,7 +1069,7 @@ async function handleRegister() {
 
   const { error: memberError } = await db
     .from('members')
-    .insert({ id: user.id, name, email })
+    .insert({ id: user.id, name, email, phone: 'email-only' })
 
   if (memberError && !memberError.message.includes('duplicate key')) {
     showErr('reg-general-err', '會員資料建立失敗，請稍後再試')
@@ -1064,6 +1083,7 @@ async function handleRegister() {
   closeModal('register')
   resetRegisterForm()
   renderNavUser()
+  renderHeroCTA()
   renderRightPanel()
   showToast('歡迎加入不完美會員！')
 
@@ -1105,6 +1125,7 @@ async function handleLogin() {
   closeModal('login')
   resetLoginForm()
   renderNavUser()
+  renderHeroCTA()
   renderRightPanel()
   showToast(`歡迎回來，${currentMember?.name || ''}！`)
 
@@ -1119,11 +1140,24 @@ async function handleLogin() {
 }
 
 async function logout() {
-  await db.auth.signOut()
+  const { error } = await db.auth.signOut()
+
+  if (error) {
+    showToast('登出失敗，請再試一次', true)
+    return
+  }
+
   currentMember = null
   dailyScans = {}
+  sessionStorage.removeItem('pending_scan')
+  closeModal('login')
+  closeModal('register')
+  resetLoginForm()
+  resetRegisterForm()
   renderNavUser()
+  renderHeroCTA()
   renderRightPanel()
+  showToast('已登出')
 }
 
 function openModal(id) {
