@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>不完美也沒關係 × Restyle 2050</title>
-<meta name="description" content="Restyle 2050 × 咖啡廳聯名活動：掃碼累積里程，抽獎不完美整新品電器">
+<meta name="description" content="Restyle 2050 × 咖啡廳聯名活動：每日到店累積抽獎機會，抽 Dyson 吹風機">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -501,7 +501,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
         也<span class="italic">沒關係</span>
       </h1>
       <p class="p1-desc">
-        這個世代追求極致完美，但我們相信，每一道刮痕、每一個瑕疵，都是故事的一部分。掃描咖啡廳 QR Code，累積里程，解鎖專屬抽獎機會。
+        這個世代追求極致完美，但我們相信，每一道刮痕、每一個瑕疵，都是故事的一部分。到合作店家掃描 QR Code，每天每店可累積 1 次抽獎機會，最後抽出 Dyson 吹風機大獎。
       </p>
       <div class="p1-cta" id="hero-cta">
         <button class="btn-join" onclick="openModal('register')">掃碼加入會員</button>
@@ -511,7 +511,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 
     <div class="p1-right" id="p1-right-panel">
       <div class="guest-card">
-        <p>加入本次限定會員，<br>透過掃碼在各咖啡廳累積里程，<br>兌換抽獎次數。</p>
+        <p>加入本次限定會員，<br>到合作店家掃碼打卡，<br>每天每店累積 1 次抽獎機會。</p>
         <button class="btn-join" style="display:inline-block;padding:12px 28px;" onclick="openModal('register')">立即加入</button>
       </div>
     </div>
@@ -636,7 +636,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
         </div>
         <div class="tl-item">
           <div class="tl-date">05.08</div>
-          <div><div class="tl-title">線上展覽開幕</div><div class="tl-desc">六件數位展品正式上線，完成掃碼即可累積活動里程</div></div>
+          <div><div class="tl-title">線上展覽開幕</div><div class="tl-desc">六件數位展品正式上線，完成到店掃碼即可累積抽獎機會</div></div>
         </div>
         <div class="tl-item">
           <div class="tl-date">05.15</div>
@@ -644,17 +644,17 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
         </div>
         <div class="tl-item">
           <div class="tl-date">05.31</div>
-          <div><div class="tl-title">活動截止 / 大抽獎</div><div class="tl-desc">最終抽獎，本活動里程系統同步關閉</div></div>
+          <div><div class="tl-title">活動截止 / 大抽獎</div><div class="tl-desc">抽出 Dyson 吹風機大獎，本活動會員累積同步結束</div></div>
         </div>
       </div>
       <div class="rules" style="margin-top:2.5rem;">
         <div class="eyebrow">抽獎規則</div>
-        <div class="rule-item"><div class="rule-n">01</div><div class="rule-t">每次掃碼獲得 30 里程，每家咖啡廳每日上限 3 次</div></div>
-        <div class="rule-item"><div class="rule-n">02</div><div class="rule-t">每晚午夜 00:00 後，同會員於同店掃碼次數重新計算；累積總里程保留</div></div>
-        <div class="rule-item"><div class="rule-n">03</div><div class="rule-t">每累積 60 里程自動兌換 1 次抽獎機會，無上限</div></div>
-        <div class="rule-item"><div class="rule-n">04</div><div class="rule-t">活動主辦方保留調整展品與合作店點內容之權利</div></div>
-        <div class="rule-item"><div class="rule-n">05</div><div class="rule-t">活動結束後里程歸零，不可兌換其他獎勵或轉讓</div></div>
-        <div class="rule-item"><div class="rule-n">06</div><div class="rule-t">得獎者將於活動結束後 7 個工作日內以 email 通知</div></div>
+        <div class="rule-item"><div class="rule-n">01</div><div class="rule-t">每位會員每天在每間合作店家可累積 1 次抽獎機會</div></div>
+        <div class="rule-item"><div class="rule-n">02</div><div class="rule-t">同一會員於同店的累積資格會在台灣時間午夜 00:00 後重新計算</div></div>
+        <div class="rule-item"><div class="rule-n">03</div><div class="rule-t">抽獎機會會直接累積在會員帳戶中，直到抽獎日為止</div></div>
+        <div class="rule-item"><div class="rule-n">04</div><div class="rule-t">大獎為 Dyson 吹風機 1 台，主辦方保留調整獎項內容之權利</div></div>
+        <div class="rule-item"><div class="rule-n">05</div><div class="rule-t">活動結束後抽獎機會失效，不可轉讓、兌現或折換其他獎勵</div></div>
+        <div class="rule-item"><div class="rule-n">06</div><div class="rule-t">得獎者將於抽獎後 7 個工作日內以 email 通知</div></div>
       </div>
     </div>
   </div>
@@ -725,6 +725,8 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 <script>
 const SUPABASE_URL  = 'https://jndqxhabxwpudcxtowbc.supabase.co'
 const SUPABASE_ANON = 'sb_publishable_V_XPYc3hi9xrM5BdYPydvg_lb-EQtfM'
+const DRAW_DATE = '2026-05-31T23:59:59+08:00'
+const GRAND_PRIZE = 'Dyson 吹風機'
 
 const { createClient } = supabase
 const db = createClient(SUPABASE_URL, SUPABASE_ANON)
@@ -772,16 +774,43 @@ async function init() {
 }
 
 async function ensureMemberLoaded(userId) {
-  const { data, error } = await db
+  let { data, error } = await db
     .from('members')
     .select('*')
     .eq('id', userId)
-    .single()
+    .maybeSingle()
 
   if (!error && data) {
     currentMember = data
     await loadDailyScans()
     return true
+  }
+
+  const { data: authData } = await db.auth.getUser()
+  const user = authData?.user
+
+  if (user && user.id === userId) {
+    const fallbackName = user.user_metadata?.name?.trim() || user.email?.split('@')[0] || '會員'
+    const fallbackEmail = user.email || ''
+
+    const { error: insertError } = await db
+      .from('members')
+      .upsert({ id: user.id, name: fallbackName, email: fallbackEmail }, { onConflict: 'id' })
+
+    if (!insertError) {
+      const res = await db
+        .from('members')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle()
+      data = res.data
+      error = res.error
+      if (!error && data) {
+        currentMember = data
+        await loadDailyScans()
+        return true
+      }
+    }
   }
 
   currentMember = null
@@ -842,7 +871,7 @@ function renderNavUser() {
   if (currentMember) {
     el.innerHTML = `
       <span>Hi, ${escapeHtml(maskName(currentMember.name))}</span>
-      <span class="nav-miles">${currentMember.total_miles} mi</span>
+      <span class="nav-miles">${currentMember.draw_tickets} 次機會</span>
       <button class="btn-ghost-sm" onclick="logout()" style="font-size:9px;padding:5px 10px;">登出</button>
     `
   } else {
@@ -866,12 +895,22 @@ function renderHeroCTA() {
   `
 }
 
+function getDrawCountdownText() {
+  const drawDate = new Date(DRAW_DATE)
+  const now = new Date()
+  const diff = drawDate.getTime() - now.getTime()
+  if (Number.isNaN(drawDate.getTime())) return '請先設定抽獎日期'
+  if (diff <= 0) return '抽獎日已到'
+  const days = Math.ceil(diff / 86400000)
+  return `倒數 ${days} 天抽獎`
+}
+
 function renderRightPanel() {
   const el = document.getElementById('p1-right-panel')
   if (!currentMember) {
     el.innerHTML = `
       <div class="guest-card">
-        <p>加入本次限定會員，<br>透過掃碼在各咖啡廳累積里程，<br>兌換抽獎次數。</p>
+        <p>加入本次限定會員，<br>到合作店家掃碼打卡，<br>每天每店累積 1 次抽獎機會。</p>
         <button class="btn-join" style="display:inline-block;padding:12px 28px;" onclick="openModal('register')">立即加入</button>
       </div>
     `
@@ -879,17 +918,15 @@ function renderRightPanel() {
   }
 
   const m = currentMember
-  const pct = Math.min((m.total_miles / 500) * 100, 100).toFixed(1)
-  const nextMilestone = Math.ceil((m.total_miles + 1) / 60) * 60
-  const toNext = nextMilestone - m.total_miles
+  const drawCountdownText = getDrawCountdownText()
 
   const locCards = locations.map(loc => {
     const count = dailyScans[loc.id] || 0
-    const remaining = Math.max(0, 3 - count)
+    const remaining = Math.max(0, 1 - count)
     const maxed = remaining <= 0
     return `
       <div class="loc-card">
-        <span class="loc-remaining ${maxed ? 'maxed' : ''}">${maxed ? '已達上限' : `剩 ${remaining} 次`}</span>
+        <span class="loc-remaining ${maxed ? 'maxed' : ''}">${maxed ? '今日已完成' : '今日可累積'}</span>
         <div class="loc-icon">☕</div>
         <div class="loc-name">${escapeHtml(loc.name)}</div>
         <div class="loc-sub">${escapeHtml(loc.district || '')}${loc.district && loc.items ? ' · ' : ''}${escapeHtml(loc.items || '')}</div>
@@ -904,12 +941,11 @@ function renderRightPanel() {
       <div class="member-name">${escapeHtml(m.name)}</div>
       <div class="member-email">${escapeHtml(m.email)}</div>
       <div class="mile-header">
-        <span class="mile-label">里程累積</span>
-        <span class="mile-fraction">${m.total_miles} mi</span>
+        <span class="mile-label">已累計抽獎機會</span>
+        <span class="mile-fraction">${m.draw_tickets} 次</span>
       </div>
-      <div class="mile-bar"><div class="mile-fill" style="width:${pct}%"></div></div>
-      <div class="miles-big">${m.total_miles}</div>
-      <div class="miles-unit">Imperfect Miles</div>
+      <div class="miles-big">${m.draw_tickets}</div>
+      <div class="miles-unit">DRAW ENTRIES</div>
     </div>
 
     <div class="locations-grid">${locCards || ''}</div>
@@ -917,16 +953,16 @@ function renderRightPanel() {
     <div class="draw-box">
       <div class="draw-left">
         <div class="draw-count">${m.draw_tickets}</div>
-        <div class="draw-label">可用抽獎次數</div>
+        <div class="draw-label">目前累計抽獎機會</div>
       </div>
       <div class="draw-right">
-        <div class="draw-note">每 60 里程兌換 1 次<br>距下次還差 ${toNext} mi</div>
+        <div class="draw-note">${drawCountdownText}<br>大獎：${GRAND_PRIZE}</div>
       </div>
     </div>
 
     <div class="reset-bar">
       <div class="dot"></div>
-      <span>各店次數將於台灣午夜重置，剩</span>
+      <span>同店累積資格將於台灣午夜重置，剩</span>
       <span class="reset-time" id="reset-countdown"></span>
     </div>
   `
@@ -997,8 +1033,7 @@ async function processScan(qrKey) {
 
   const { data, error } = await db.rpc('scan_and_earn', {
     p_location_id: loc.id,
-    p_miles: 30,
-    p_daily_limit: 3
+    p_daily_limit: 1
   })
 
   if (error) {
@@ -1010,12 +1045,11 @@ async function processScan(qrKey) {
   if (!data?.success) {
     showToast(data?.message || '掃碼失敗', true)
   } else {
-    currentMember.total_miles = data.total_miles
     currentMember.draw_tickets = data.draw_tickets
     dailyScans[loc.id] = data.scans_today
     renderNavUser()
     renderRightPanel()
-    showToast(`+${data.miles_earned} 里程！今日 ${loc.name} 還剩 ${data.scans_remaining} 次`)
+    showToast(`已累積 1 次抽獎機會！${loc.name} 今日已完成打卡`)
   }
 
   history.replaceState({}, '', location.pathname)
@@ -1048,7 +1082,10 @@ async function handleRegister() {
 
   const { data: signUpData, error: signUpError } = await db.auth.signUp({
     email,
-    password
+    password,
+    options: {
+      data: { name }
+    }
   })
 
   if (signUpError) {
@@ -1068,10 +1105,19 @@ async function handleRegister() {
 
   const { error: memberError } = await db
     .from('members')
-.insert({ id: user.id, name, email })
+    .upsert({ id: user.id, name, email }, { onConflict: 'id' })
 
-  if (memberError && !memberError.message.includes('duplicate key')) {
+  if (memberError && !String(memberError.message || '').includes('duplicate key')) {
     showErr('reg-general-err', '會員資料建立失敗，請稍後再試')
+    btn.disabled = false
+    btn.textContent = '立即加入'
+    return
+  }
+
+  if (!signUpData.session) {
+    resetRegisterForm()
+    closeModal('register')
+    showToast('註冊成功，請先到 Email 完成驗證，再回來登入', true)
     btn.disabled = false
     btn.textContent = '立即加入'
     return
@@ -1113,14 +1159,27 @@ async function handleLogin() {
 
   const { data, error } = await db.auth.signInWithPassword({ email, password })
   if (error || !data.user) {
-    showErr('login-err', 'Email 或密碼錯誤')
+    const message = String(error?.message || '')
+    if (message.toLowerCase().includes('email not confirmed')) {
+      showErr('login-err', '這個 Email 還沒驗證，請先去信箱完成驗證')
+    } else {
+      showErr('login-err', 'Email 或密碼錯誤')
+    }
     btn.disabled = false
     btn.textContent = '登入'
     return
   }
 
-  await ensureMemberLoaded(data.user.id)
+  const memberLoaded = await ensureMemberLoaded(data.user.id)
   await loadLocations()
+
+  if (!memberLoaded) {
+    showErr('login-err', '登入成功，但會員資料沒有建立成功')
+    btn.disabled = false
+    btn.textContent = '登入'
+    return
+  }
+
   closeModal('login')
   resetLoginForm()
   renderNavUser()
@@ -1139,10 +1198,10 @@ async function handleLogin() {
 }
 
 async function logout() {
-  const { error } = await db.auth.signOut()
+  const { error } = await db.auth.signOut({ scope: 'local' })
 
   if (error) {
-    showToast('登出失敗，請再試一次', true)
+    showToast(`登出失敗：${error.message || '請再試一次'}`, true)
     return
   }
 
@@ -1157,6 +1216,9 @@ async function logout() {
   renderHeroCTA()
   renderRightPanel()
   showToast('已登出')
+  setTimeout(() => {
+    window.location.replace(location.pathname)
+  }, 150)
 }
 
 function openModal(id) {
