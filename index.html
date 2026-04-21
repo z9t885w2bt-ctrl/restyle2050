@@ -670,7 +670,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
     <button class="modal-close" onclick="closeModal('register')">✕</button>
     <div class="modal-tag">加入會員 — 限定活動</div>
     <h2>成為不完美會員</h2>
-    <p>填寫姓名、Email 與密碼即可加入會員。若你想關閉 Email 驗證信，可在 Supabase Authentication 後台設定。</p>
+    <p>填寫姓名、Email 與密碼即可加入會員。建議在 Supabase Authentication 關閉 Confirm email，流程會最簡單。</p>
 
     <div class="form-group">
       <label class="form-label">姓名</label>
@@ -996,7 +996,6 @@ async function processScan(qrKey) {
   }
 
   const { data, error } = await db.rpc('scan_and_earn', {
-    p_member_id: currentMember.id,
     p_location_id: loc.id,
     p_miles: 30,
     p_daily_limit: 3
@@ -1069,7 +1068,7 @@ async function handleRegister() {
 
   const { error: memberError } = await db
     .from('members')
-    .insert({ id: user.id, name, email, phone: 'email-only' })
+.insert({ id: user.id, name, email })
 
   if (memberError && !memberError.message.includes('duplicate key')) {
     showErr('reg-general-err', '會員資料建立失敗，請稍後再試')
