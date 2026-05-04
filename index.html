@@ -858,7 +858,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
 </div>
 
 <footer>
-  <p>© 2025 Restyle 2050 × Imperfect Campaign</p>
+  <p>© 2026 Restyle 2050 × Imperfect Campaign</p>
   <p>本活動為期間限定會員制度，活動結束後帳號自動關閉</p>
 </footer>
 
@@ -891,6 +891,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
     </div>
 
     <button class="btn-primary" id="reg-btn" onclick="handleRegister()">立即加入</button>
+    <button class="btn-ghost-sm" onclick="closeModal('register'); openModal('login')" style="width:100%;margin-top:.75rem;">已有帳號？直接登入</button>
     <div id="reg-general-err" class="form-error" style="display:none;margin-top:.75rem;"></div>
   </div>
 </div>
@@ -914,6 +915,7 @@ footer p { font-size: 9px; letter-spacing: 0.15em; color: var(--muted); }
     </div>
 
     <button class="btn-primary" id="login-btn" onclick="handleLogin()">登入</button>
+    <button class="btn-ghost-sm" onclick="closeModal('login'); openModal('register')" style="width:100%;margin-top:.75rem;">還沒有帳號？立即註冊</button>
   </div>
 </div>
 
