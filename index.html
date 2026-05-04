@@ -474,7 +474,7 @@ nav {
 .reset-bar .dot {
   width: 6px; height: 6px;
   background: var(--toast); border-radius: 50%;
-  animation: pulse 2s infinite;
+  animation: pulse 2s infe;
 }
 @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 .reset-time { color: var(--toast); font-variant-numeric: tabular-nums; }
@@ -1649,7 +1649,172 @@ function humanizeAuthError(message) {
   if (message.includes('Unable to validate email address')) return 'Email 格式不正確'
   return message
 }
+/* ============================================================
+   RESTYLE 2050 QR SCAN FIX
+   修正：掃 QR 進站 → 登入 / 註冊 → 自動累積 1 次抽獎機會
+   ============================================================ */
 
+function getPendingScanKey() {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get('scan');
+  const fromSession = sessionStorage.getItem('pending_scan');
+
+  if (fromUrl) {
+    sessionStorage.setItem('pending_scan', fromUrl);
+    return fromUrl;
+  }
+
+  return fromSession;
+}
+
+function rememberScanFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const scanKey = params.get('scan');
+
+  if (scanKey) {
+    sessionStorage.setItem('pending_scan', scanKey);
+  }
+
+  return scanKey;
+}
+
+async function callScanRpcFixed(locationId) {
+  const result = await db.rpc('scan_and_earn', {
+    p_location_id: locationId,
+    p_daily_limit: 1
+  });
+
+  return result;
+}
+
+async function handlePendingScanAfterAuth() {
+  const pendingScan = getPendingScanKey();
+
+  if (!pendingScan) return;
+  if (!currentMember) return;
+
+  await processScan(pendingScan);
+}
+
+async function processScan(qrKey) {
+  if (!qrKey) return;
+
+  if (!currentMember) {
+    sessionStorage.setItem('pending_scan', qrKey);
+    showToast('請先登入或註冊，登入後會自動累積抽獎機會');
+
+    if (typeof openModal === 'function') {
+      openModal('login');
+    }
+
+    return;
+  }
+
+  if (!locations || locations.length === 0) {
+    await loadLocations();
+  }
+
+  let loc = locations.find(l => l.qr_code_key === qrKey);
+
+  if (!loc) {
+    await loadLocations();
+    loc = locations.find(l => l.qr_code_key === qrKey);
+  }
+
+  if (!loc) {
+    showToast(`無效的 QR Code：${qrKey}`, true);
+    return;
+  }
+
+  showToast('正在登錄抽獎機會...');
+
+  const { data, error } = await callScanRpcFixed(loc.id);
+
+  if (error) {
+    console.error('scan_and_earn error:', error);
+    showToast(error.message || '系統錯誤，請確認 Supabase SQL 已更新', true);
+    return;
+  }
+
+  if (!data || data.success !== true) {
+    showToast(data?.message || '掃碼失敗，請稍後再試', true);
+    return;
+  }
+
+  currentMember.total_miles = data.total_entries ?? currentMember.total_miles;
+  currentMember.draw_tickets = data.draw_tickets ?? currentMember.draw_tickets;
+
+  dailyScans[loc.id] = data.scans_today ?? 1;
+
+  if (typeof ensureMemberLoaded === 'function') {
+    await ensureMemberLoaded(currentMember.id);
+  }
+
+  if (typeof loadDailyScans === 'function') {
+    await loadDailyScans();
+  }
+
+  if (typeof renderNavUser === 'function') renderNavUser();
+  if (typeof renderHeroCTA === 'function') renderHeroCTA();
+  if (typeof renderRightPanel === 'function') renderRightPanel();
+  if (typeof renderPartnersCafes === 'function') renderPartnersCafes();
+
+  sessionStorage.removeItem('pending_scan');
+
+  const cleanUrl = window.location.origin + window.location.pathname;
+  window.history.replaceState({}, '', cleanUrl);
+
+  showToast(`已累積 1 次抽獎機會！${loc.name} 今日已完成打卡`);
+}
+
+const originalInit = typeof init === 'function' ? init : null;
+
+init = async function patchedInit() {
+  rememberScanFromUrl();
+
+  if (originalInit) {
+    await originalInit();
+  }
+
+  const pendingScan = getPendingScanKey();
+
+  if (pendingScan && currentMember) {
+    await handlePendingScanAfterAuth();
+  } else if (pendingScan && !currentMember) {
+    showToast('請先登入或註冊，登入後會自動累積抽獎機會');
+    if (typeof openModal === 'function') {
+      openModal('login');
+    }
+  }
+};
+
+const originalHandleLogin = typeof handleLogin === 'function' ? handleLogin : null;
+
+handleLogin = async function patchedHandleLogin() {
+  if (originalHandleLogin) {
+    await originalHandleLogin();
+  }
+
+  setTimeout(async () => {
+    if (currentMember) {
+      await handlePendingScanAfterAuth();
+    }
+  }, 300);
+};
+
+const originalHandleRegister = typeof handleRegister === 'function' ? handleRegister : null;
+
+handleRegister = async function patchedHandleRegister() {
+  if (originalHandleRegister) {
+    await originalHandleRegister();
+  }
+
+  setTimeout(async () => {
+    if (currentMember) {
+      await handlePendingScanAfterAuth();
+    }
+  }, 300);
+};
 init()
 </script>
 </body>
