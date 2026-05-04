@@ -931,15 +931,32 @@ const GRAND_PRIZE = 'Dyson 吹風機'
 const { createClient } = supabase
 const db = createClient(SUPABASE_URL, SUPABASE_ANON)
 
+function withTimeout(promise, ms, timeoutMessage) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(timeoutMessage || '連線逾時，請重新整理後再試')), ms)
+    })
+  ])
+}
+
 let currentMember = null
 let locations = []
 let dailyScans = {}
 let countdownTimer = null
 
 async function init() {
-  const { data: { session } } = await db.auth.getSession()
-  if (session?.user) {
-    await ensureMemberLoaded(session.user.id)
+  try {
+    const { data: { session } } = await withTimeout(
+      db.auth.getSession(),
+      8000,
+      '讀取登入狀態逾時，請重新整理後再試'
+    )
+    if (session?.user) {
+      await ensureMemberLoaded(session.user.id)
+    }
+  } catch (err) {
+    console.warn(err)
   }
 
   await loadLocations()
@@ -958,18 +975,26 @@ async function init() {
     openModal('register')
   }
 
-  db.auth.onAuthStateChange(async (_event, session) => {
-    if (session?.user) {
-      await ensureMemberLoaded(session.user.id)
-    } else {
-      currentMember = null
-      dailyScans = {}
-    }
-    await loadLocations()
-    renderNavUser()
-    renderHeroCTA()
-    renderRightPanel()
-    renderPartnersCafes()
+  // Supabase auth callback 不能直接 await 其他 Supabase 方法，否則有時會卡在登入中。
+  // 用 setTimeout 把後續讀取會員資料的動作丟到下一輪事件，避免登入按鈕一直轉圈。
+  db.auth.onAuthStateChange((_event, session) => {
+    setTimeout(async () => {
+      try {
+        if (session?.user) {
+          await ensureMemberLoaded(session.user.id)
+        } else {
+          currentMember = null
+          dailyScans = {}
+        }
+        await loadLocations()
+        renderNavUser()
+        renderHeroCTA()
+        renderRightPanel()
+        renderPartnersCafes()
+      } catch (err) {
+        console.error('Auth state refresh failed:', err)
+      }
+    }, 0)
   })
 }
 
@@ -1364,13 +1389,28 @@ async function handleRegister() {
   btn.disabled = true
   btn.innerHTML = '<span class="spinner"></span>'
 
-  const { data: signUpData, error: signUpError } = await db.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { name }
-    }
-  })
+  let signUpData, signUpError
+  try {
+    const result = await withTimeout(
+      db.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }
+        }
+      }),
+      12000,
+      '註冊連線逾時，請重新整理頁面後再試'
+    )
+    signUpData = result.data
+    signUpError = result.error
+  } catch (err) {
+    console.error('Register timeout/error:', err)
+    showErr('reg-general-err', err.message || '註冊連線逾時，請重新整理頁面後再試')
+    btn.disabled = false
+    btn.textContent = '立即加入'
+    return
+  }
 
   if (signUpError) {
     showErr('reg-general-err', humanizeAuthError(signUpError.message))
@@ -1441,8 +1481,24 @@ async function handleLogin() {
   btn.disabled = true
   btn.innerHTML = '<span class="spinner"></span>'
 
-  const { data, error } = await db.auth.signInWithPassword({ email, password })
-  if (error || !data.user) {
+  let data, error
+  try {
+    const result = await withTimeout(
+      db.auth.signInWithPassword({ email, password }),
+      12000,
+      '登入連線逾時，請重新整理頁面後再試'
+    )
+    data = result.data
+    error = result.error
+  } catch (err) {
+    console.error('Login timeout/error:', err)
+    showErr('login-err', err.message || '登入連線逾時，請重新整理頁面後再試')
+    btn.disabled = false
+    btn.textContent = '登入'
+    return
+  }
+
+  if (error || !data?.user) {
     const message = String(error?.message || '')
     if (message.toLowerCase().includes('email not confirmed')) {
       showErr('login-err', '這個 Email 還沒驗證，請先去信箱完成驗證')
@@ -1454,8 +1510,21 @@ async function handleLogin() {
     return
   }
 
-  const memberLoaded = await ensureMemberLoaded(data.user.id)
-  await loadLocations()
+  let memberLoaded = false
+  try {
+    memberLoaded = await withTimeout(
+      ensureMemberLoaded(data.user.id),
+      12000,
+      '登入成功，但讀取會員資料逾時，請重新整理頁面'
+    )
+    await withTimeout(loadLocations(), 12000, '讀取店家資料逾時，請重新整理頁面')
+  } catch (err) {
+    console.error('Member/location load failed:', err)
+    showErr('login-err', err.message || '登入成功，但會員資料讀取失敗')
+    btn.disabled = false
+    btn.textContent = '登入'
+    return
+  }
 
   if (!memberLoaded) {
     showErr('login-err', '登入成功，但會員資料沒有建立成功')
