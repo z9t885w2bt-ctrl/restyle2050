@@ -941,21 +941,26 @@
 
     }
 
-    .product-image img{
+    .product-image{
+  aspect-ratio:4/3;
+  background:linear-gradient(180deg,#f6f2ea,#f0eadf);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  overflow:hidden;
+}
 
-      width:100%;
-
-      height:100%;
-
-      object-fit:contain;
-
-      border-radius:16px;
-
-      box-shadow:0 14px 36px rgba(31,31,31,.08);
-
-      background:#fff;
-
-    }
+.product-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  border-radius:16px;
+  box-shadow:0 14px 36px rgba(31,31,31,.08);
+  background:#fff;
+}
 
     .product-body{
 
