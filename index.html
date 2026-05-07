@@ -3071,15 +3071,14 @@
 
     }
 
-    async function callScanRpc(locationId) {
-
-      let result = await db.rpc('scan_and_earn', {
-
-        p_location_id: locationId,
-
-        p_daily_limit: 1
-
-      })
+async function callScanRpc(locationId) {
+  return await db.rpc('scan_and_earn', {
+    p_member_id: currentMember.id,
+    p_location_id: locationId,
+    p_miles: 0,
+    p_daily_limit: 1
+  })
+}
 
       if (!result.error) return result
 
@@ -3175,7 +3174,7 @@
 
         }
 
-        currentMember.total_miles = data.total_entries ?? currentMember.total_miles
+        currentMember.total_miles = data.total_entries ?? data.total_miles ?? currentMember.total_milesles
 
         currentMember.draw_tickets = data.draw_tickets ?? currentMember.draw_tickets
 
