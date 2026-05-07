@@ -3212,19 +3212,14 @@ async function callScanRpc(locationId) {
 
     }
 
-    async function init() {
-
-      await loadLocations()
-
-      const { data: authData } = await db.auth.getUser()
-
-      const user = authData?.user || null
-
-      if (user) {
-
-        await ensureMemberProfile(user)
-
-      }
+    async function callScanRpc(locationId) {
+  return await db.rpc('scan_and_earn', {
+    p_member_id: currentMember.id,
+    p_location_id: locationId,
+    p_miles: 0,
+    p_daily_limit: 1
+  })
+}
 
       renderNavUser()
 
