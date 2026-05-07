@@ -3044,32 +3044,22 @@
     }
 
     async function logout() {
+  try {
+    await db.auth.signOut()
+  } catch (err) {
+    console.warn(err)
+  }
 
-      try {
+  currentMember = null
+  clearPendingScan()
 
-        await db.auth.signOut()
+  renderNavUser()
+  renderMemberBox()
+  renderHeroActions()
+  renderCTAButtons()
 
-      } catch (err) {
-
-        console.warn(err)
-
-      }
-
-      currentMember = null
-
-      clearPendingScan()
-
-      renderNavUser()
-
-      renderMemberBox()
-
-      renderHeroActions()
-
-      renderCTAButtons()
-
-      showToast('已登出')
-
-    }
+  showToast('已登出')
+}
 
 async function callScanRpc(locationId) {
   return await db.rpc('scan_and_earn', {
@@ -3080,208 +3070,181 @@ async function callScanRpc(locationId) {
   })
 }
 
-      if (!result.error) return result
+async function processScan(qrKey) {
+  if (!qrKey) return
 
-      // fallback: 有些舊版函式參數不同
+  if (!currentMember) {
+    sessionStorage.setItem('pending_scan', qrKey)
+    showToast('請先登入或註冊，登入後會自動累積抽獎機會')
+    openModal('login')
+    return
+  }
 
-      result = await db.rpc('scan_and_earn', {
+  if (!locations.length) {
+    await loadLocations()
+  }
 
-        p_member_id: currentMember.id,
+  const loc = locations.find(x => x.qr_code_key === qrKey)
 
-        p_location_id: locationId,
+  if (!loc) {
+    showToast('找不到對應店家，請確認 QR Code 是否正確', true)
+    return
+  }
 
-        p_miles: 1,
+  const now = new Date()
+  const start = new Date(CAMPAIGN_START)
+  const end = new Date(CAMPAIGN_END)
 
-        p_daily_limit: 1
+  if (now < start) {
+    showToast('活動尚未開始，將於 2026/05/06 開始', true)
+    return
+  }
 
-      })
+  if (now > end) {
+    showToast('活動已結束，無法再累積抽獎機會', true)
+    return
+  }
 
-      return result
+  try {
+    showToast('正在登錄抽獎機會...')
 
+    const { data, error } = await callScanRpc(loc.id)
+
+    if (error) {
+      console.error('scan_and_earn error', error)
+      throw error
     }
 
-    async function processScan(qrKey) {
-
-      if (!qrKey) return
-
-      if (!currentMember) {
-
-        sessionStorage.setItem('pending_scan', qrKey)
-
-        showToast('請先登入或註冊，登入後會自動累積抽獎機會')
-
-        openModal('login')
-
-        return
-
-      }
-
-      if (!locations.length) {
-
-        await loadLocations()
-
-      }
-
-      let loc = locations.find(x => x.qr_code_key === qrKey)
-
-      if (!loc) {
-
-        showToast('找不到對應店家，請確認 QR Code 是否正確', true)
-
-        return
-
-      }
-
-      const now = new Date()
-
-      const start = new Date(CAMPAIGN_START)
-
-      const end = new Date(CAMPAIGN_END)
-
-      if (now < start) {
-
-        showToast('活動尚未開始，將於 2026/05/06 開始', true)
-
-        return
-
-      }
-
-      if (now > end) {
-
-        showToast('活動已結束，無法再累積抽獎機會', true)
-
-        return
-
-      }
-
-      try {
-
-        showToast('正在登錄抽獎機會...')
-
-        const { data, error } = await callScanRpc(loc.id)
-
-        if (error) {
-
-          console.error('scan_and_earn error', error)
-
-          throw error
-
-        }
-
-        if (!data || data.success !== true) {
-
-          throw new Error(data?.message || '掃碼失敗')
-
-        }
-
-        currentMember.total_miles = data.total_entries ?? data.total_miles ?? currentMember.total_milesles
-
-        currentMember.draw_tickets = data.draw_tickets ?? currentMember.draw_tickets
-
-        dailyScans[loc.id] = data.scans_today ?? 1
-
-        renderNavUser()
-
-        renderMemberBox()
-
-        renderHeroActions()
-
-        renderCTAButtons()
-
-        clearPendingScan()
-
-        showToast(`已累積 1 次抽獎機會！${loc.name} 今日已完成打卡`)
-
-      } catch (err) {
-
-        console.error(err)
-
-        showToast(err.message || '掃碼失敗，請確認 Supabase SQL 已更新', true)
-
-      }
-
+    if (!data || data.success !== true) {
+      throw new Error(data?.message || '掃碼失敗')
     }
 
-    async function handlePendingScanAfterAuth() {
+    currentMember.total_miles = data.total_entries ?? data.total_miles ?? currentMember.total_miles
+    currentMember.draw_tickets = data.draw_tickets ?? currentMember.draw_tickets
 
-      const pending = getPendingScanKey()
+    dailyScans[loc.id] = data.scans_today ?? 1
 
-      if (!pending || !currentMember) return
+    renderNavUser()
+    renderMemberBox()
+    renderHeroActions()
+    renderCTAButtons()
 
-      await processScan(pending)
+    clearPendingScan()
 
-    }
-
-    async function callScanRpc(locationId) {
-  return await db.rpc('scan_and_earn', {
-    p_member_id: currentMember.id,
-    p_location_id: locationId,
-    p_miles: 0,
-    p_daily_limit: 1
-  })
+    showToast(`已累積 1 次抽獎機會！${loc.name} 今日已完成打卡`)
+  } catch (err) {
+    console.error(err)
+    showToast(err.message || '掃碼失敗，請確認 Supabase SQL 已更新', true)
+  }
 }
 
-      renderNavUser()
+async function handlePendingScanAfterAuth() {
+  const pending = getPendingScanKey()
 
-      renderMemberBox()
+  if (!pending || !currentMember) return
 
-      renderHeroActions()
+  await processScan(pending)
+}
 
-      renderCTAButtons()
+async function init() {
+  try {
+    renderNavUser()
+    renderMemberBox()
+    renderHeroActions()
+    renderCTAButtons()
 
-      const pending = getPendingScanKey()
+    await loadLocations()
 
-      if (pending && !currentMember) {
+    const { data: authData } = await db.auth.getUser()
+    const user = authData?.user || null
 
-        showToast('請先登入或註冊，登入後會自動累積抽獎機會')
-
-      } else if (pending && currentMember) {
-
-        await processScan(pending)
-
-      }
-
-      db.auth.onAuthStateChange(async (event, session) => {
-
-        if (event === 'SIGNED_IN' && session?.user) {
-
-          setTimeout(async () => {
-
-            await ensureMemberProfile(session.user)
-
-            renderNavUser()
-
-            renderMemberBox()
-
-            renderHeroActions()
-
-            renderCTAButtons()
-
-            await handlePendingScanAfterAuth()
-
-          }, 0)
-
-        }
-
-        if (event === 'SIGNED_OUT') {
-
-          currentMember = null
-
-          renderNavUser()
-
-          renderMemberBox()
-
-          renderHeroActions()
-
-          renderCTAButtons()
-
-        }
-
-      })
-
+    if (user) {
+      await ensureMemberProfile(user)
     }
 
-    init()
+    renderNavUser()
+    renderMemberBox()
+    renderHeroActions()
+    renderCTAButtons()
+
+    const pending = getPendingScanKey()
+
+    if (pending && !currentMember) {
+      showToast('請先登入或註冊，登入後會自動累積抽獎機會')
+      openModal('login')
+    } else if (pending && currentMember) {
+      await processScan(pending)
+    }
+
+    db.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        setTimeout(async () => {
+          await ensureMemberProfile(session.user)
+
+          renderNavUser()
+          renderMemberBox()
+          renderHeroActions()
+          renderCTAButtons()
+
+          await handlePendingScanAfterAuth()
+        }, 0)
+      }
+
+      if (event === 'SIGNED_OUT') {
+        currentMember = null
+
+        renderNavUser()
+        renderMemberBox()
+        renderHeroActions()
+        renderCTAButtons()
+      }
+    })
+  } catch (err) {
+    console.error('init failed:', err)
+
+    const navUser = document.getElementById('navUser')
+    const heroActions = document.getElementById('heroActions')
+    const memberBox = document.getElementById('memberBox')
+    const ctaButtons = document.getElementById('ctaButtons')
+
+    if (navUser) {
+      navUser.innerHTML = `
+        <button class="btn-ghost" onclick="openModal('login')">登入</button>
+        <button class="btn" onclick="openModal('register')">註冊</button>
+      `
+    }
+
+    if (heroActions) {
+      heroActions.innerHTML = `
+        <button class="btn" onclick="openModal('register')">立即註冊會員</button>
+        <button class="btn-ghost" onclick="openModal('login')">已有帳號登入</button>
+      `
+    }
+
+    if (memberBox) {
+      memberBox.innerHTML = `
+        <div class="member-main">
+          <div>
+            <strong>0</strong>
+            <div class="member-sub">尚未登入，請先註冊或登入</div>
+          </div>
+        </div>
+        <button class="btn" onclick="openModal('login')">登入後參與活動</button>
+      `
+    }
+
+    if (ctaButtons) {
+      ctaButtons.innerHTML = `
+        <button class="btn" onclick="openModal('register')">註冊會員</button>
+        <button class="btn-ghost" onclick="openModal('login')">已有帳號，前往登入</button>
+      `
+    }
+
+    showToast('網站初始化失敗，但登入入口已保留', true)
+  }
+}
+
+init()
 
   </script>
 
