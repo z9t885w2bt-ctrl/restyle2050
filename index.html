@@ -1442,24 +1442,28 @@
     }
 
     .field input,
+.field textarea,
+.field select{
 
-    .field textarea{
+  width:100%;
 
-      width:100%;
+  border:1px solid var(--line-strong);
 
-      border:1px solid var(--line-strong);
+  border-radius:14px;
 
-      border-radius:14px;
+  padding:13px 14px;
 
-      padding:13px 14px;
+  background:#fff;
 
-      background:#fff;
+  color:var(--ink);
 
-      color:var(--ink);
+  outline:none;
 
-      outline:none;
+}
 
-    }
+.field select{
+  appearance:none;
+}
 
     .field input:focus,
 
@@ -2390,6 +2394,22 @@
             <input id="registerEmail" type="email" placeholder="you@example.com" />
 
           </div>
+          <div class="field">
+
+  <label>年齡段</label>
+
+  <select id="registerAgeGroup">
+    <option value="">請選擇年齡段</option>
+    <option value="under_18">18 歲以下</option>
+    <option value="18_24">18–24 歲</option>
+    <option value="25_34">25–34 歲</option>
+    <option value="35_44">35–44 歲</option>
+    <option value="45_54">45–54 歲</option>
+    <option value="55_plus">55 歲以上</option>
+    <option value="prefer_not_to_say">不方便透露</option>
+  </select>
+
+</div>
 
           <div class="field">
 
@@ -2647,19 +2667,21 @@
 
           '會員'
 
-        const insertPayload = {
+       const insertPayload = {
 
-          id: user.id,
+  id: user.id,
 
-          name: fallbackName,
+  name: fallbackName,
 
-          email: user.email,
+  email: user.email,
 
-          total_miles: 0,
+  age_group: user.user_metadata?.age_group || null,
 
-          draw_tickets: 0
+  total_miles: 0,
 
-        }
+  draw_tickets: 0
+
+}
 
         const { data: inserted, error: insertErr } = await db
 
@@ -2962,8 +2984,9 @@
       const email = document.getElementById('registerEmail').value.trim()
 
       const password = document.getElementById('registerPassword').value.trim()
+      const ageGroup = document.getElementById('registerAgeGroup').value
 
-      if (!name || !email || !password) {
+      if (!name || !email || !password || !ageGroup) {
 
         showToast('請完整填寫註冊資料', true)
 
@@ -2997,7 +3020,7 @@
 
           options: {
 
-            data: { name }
+            data: { name, age_group: ageGroup }
 
           }
 
