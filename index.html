@@ -1626,7 +1626,81 @@
       }
 
     }
+/* ─── BRAND / SOCIAL LINKS ─── */
+.brand-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
 
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid rgba(212,196,168,0.28);
+  color: var(--sand);
+  padding: 9px 15px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: all .2s;
+}
+
+.brand-link:hover {
+  color: var(--charcoal);
+  background: var(--toast);
+  border-color: var(--toast);
+}
+
+.social-cta {
+  margin: 2px;
+  padding: 2rem 3.5rem;
+  border-top: 0.5px solid rgba(212,196,168,0.12);
+  border-bottom: 0.5px solid rgba(212,196,168,0.12);
+  background: rgba(139,69,19,0.07);
+}
+
+.social-cta-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--cream);
+  margin-bottom: .75rem;
+}
+
+.social-cta-text {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--sand);
+  max-width: 680px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.footer-links a {
+  color: var(--toast);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+}
+
+.footer-links a:hover {
+  color: var(--cream);
+}
+
+@media (max-width: 768px) {
+  .social-cta {
+    padding: 2rem 1.5rem;
+  }
+
+  .footer-links {
+    justify-content: center;
+  }
+}
   </style>
 
 </head>
