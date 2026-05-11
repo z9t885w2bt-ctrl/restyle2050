@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 
 <html lang="zh-Hant">
@@ -1626,80 +1627,52 @@
       }
 
     }
-/* ─── BRAND / SOCIAL LINKS ─── */
-.brand-link-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 1.5rem;
+/* ─── SOCIAL CTA CARD ─── */
+.social-card{
+  margin-top:24px;
+  padding:20px;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(235,227,214,.82) 0%, rgba(235,227,214,0) 38%),
+    linear-gradient(180deg, rgba(255,255,255,.74) 0%, rgba(248,244,235,.88) 100%);
+  border:1px solid var(--line);
+  box-shadow:0 14px 34px rgba(31,31,31,.05);
 }
 
-.brand-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0.5px solid rgba(212,196,168,0.28);
-  color: var(--sand);
-  padding: 9px 15px;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  transition: all .2s;
+.social-card-kicker{
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:6px;
 }
 
-.brand-link:hover {
-  color: var(--charcoal);
-  background: var(--toast);
-  border-color: var(--toast);
+.social-card-title{
+  font-size:19px;
+  font-weight:700;
+  line-height:1.35;
+  margin-bottom:8px;
 }
 
-.social-cta {
-  margin: 2px;
-  padding: 2rem 3.5rem;
-  border-top: 0.5px solid rgba(212,196,168,0.12);
-  border-bottom: 0.5px solid rgba(212,196,168,0.12);
-  background: rgba(139,69,19,0.07);
+.social-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.9;
+  max-width:48em;
 }
 
-.social-cta-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 1.6rem;
-  color: var(--cream);
-  margin-bottom: .75rem;
+.social-card-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:16px;
 }
 
-.social-cta-text {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 13px;
-  line-height: 2;
-  color: var(--sand);
-  max-width: 680px;
-}
-
-.footer-links {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.footer-links a {
-  color: var(--toast);
-  font-size: 9px;
-  letter-spacing: 0.15em;
-}
-
-.footer-links a:hover {
-  color: var(--cream);
-}
-
-@media (max-width: 768px) {
-  .social-cta {
-    padding: 2rem 1.5rem;
-  }
-
-  .footer-links {
-    justify-content: center;
-  }
+.social-card-actions .btn-soft,
+.social-card-actions .btn-ghost{
+  font-size:13px;
+  padding:11px 15px;
 }
   </style>
 
@@ -1776,22 +1749,24 @@
           </div>
 
           <div class="hero-actions" id="heroActions"></div>
+<div class="social-card">
+  <div class="social-card-kicker">Follow the update</div>
+  <div class="social-card-title">抽獎結果將公告於 Instagram</div>
+  <p>
+    活動結果會同步公告在 Restyle2050 Instagram，並以 Email 通知中獎者。
+    怕錯過通知的話，可以先追蹤官方帳號。
+  </p>
 
-<div class="official-links">
-  <a class="official-link" href="https://www.restyle2050.com/?srsltid=AfmBOooIZ6RMyBGsQ2pl5LnGg39CfLok0Pt5S3y8sXVJMHIzcVMwYHiA" target="_blank" rel="noopener">
-    前往 Restyle2050 官網
-  </a>
+  <div class="social-card-actions">
+    <a class="btn-soft" href="https://www.restyle2050.com/?srsltid=AfmBOooIZ6RMyBGsQ2pl5LnGg39CfLok0Pt5S3y8sXVJMHIzcVMwYHiA" target="_blank" rel="noopener">
+      Restyle2050 官網
+    </a>
 
-  <a class="official-link" href="https://www.instagram.com/restyle2050?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">
-    追蹤 @restyle2050
-  </a>
+    <a class="btn-ghost" href="https://www.instagram.com/restyle2050?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">
+      追蹤 @restyle2050
+    </a>
+  </div>
 </div>
-
-<div class="ig-note">
-  抽獎結果會公告在 Restyle2050 Instagram，也會以 Email 通知中獎者。怕錯過通知的話，可以先追蹤 IG。
-</div>
-
-        </div>
 
       </div>
 
