@@ -2468,7 +2468,7 @@
 
   <label>年齡段</label>
 
-  <select id="registerAgeGroup">
+  <select id="registerAgeGroup" required>
     <option value="">請選擇年齡段</option>
     <option value="under_18">18 歲以下</option>
     <option value="18_24">18–24 歲</option>
@@ -2562,6 +2562,9 @@
     let locations = []
 
     let dailyScans = {}
+
+    // 暫存註冊當下的資料，避免 Supabase Auth 狀態變化比 members 建檔更早觸發，導致 age_group 變成 null
+    let pendingRegistrationProfile = null
 
     function showToast(message, isError = false) {
 
@@ -2701,11 +2704,23 @@
 
     }
 
-    async function ensureMemberProfile(user) {
+    async function ensureMemberProfile(user, forcedAgeGroup = null, forcedName = null) {
 
       if (!user) return null
 
       try {
+
+        const ageGroup =
+          forcedAgeGroup ||
+          user.user_metadata?.age_group ||
+          null
+
+        const fallbackName =
+          forcedName ||
+          user.user_metadata?.name ||
+          user.user_metadata?.full_name ||
+          user.email?.split('@')[0] ||
+          '會員'
 
         const { data: found, error: findErr } = await db
 
@@ -2721,37 +2736,62 @@
 
         if (found) {
 
+          const patch = {}
+
+          // 這裡是本次修正重點：
+          // 如果 onAuthStateChange 先建立了 members，age_group 可能會先變成 null。
+          // 後續註冊流程拿到表單的 forcedAgeGroup 時，要把它補回 members.age_group。
+          if (!found.age_group && ageGroup) {
+            patch.age_group = ageGroup
+          }
+
+          if ((!found.name || found.name === '會員') && fallbackName) {
+            patch.name = fallbackName
+          }
+
+          if (Object.keys(patch).length > 0) {
+            const { data: updated, error: updateErr } = await db
+
+              .from('members')
+
+              .update(patch)
+
+              .eq('id', user.id)
+
+              .select('*')
+
+              .single()
+
+            if (updateErr) throw updateErr
+
+            currentMember = updated
+
+            return updated
+          }
+
           currentMember = found
 
           return found
 
         }
 
-        const fallbackName =
+        const insertPayload = {
 
-          user.user_metadata?.name ||
+          id: user.id,
 
-          user.user_metadata?.full_name ||
+          name: fallbackName,
 
-          user.email?.split('@')[0] ||
+          email: user.email,
 
-          '會員'
+          age_group: ageGroup,
 
-       const insertPayload = {
+          total_miles: 0,
 
-  id: user.id,
+          draw_tickets: 0
 
-  name: fallbackName,
+        }
 
-  email: user.email,
-
-  age_group: user.user_metadata?.age_group || null,
-
-  total_miles: 0,
-
-  draw_tickets: 0
-
-}
+        console.log('準備寫入 members：', insertPayload)
 
         const { data: inserted, error: insertErr } = await db
 
@@ -3082,6 +3122,8 @@
 
         )
 
+        pendingRegistrationProfile = { name, email, age_group: ageGroup }
+
         const action = db.auth.signUp({
 
           email,
@@ -3102,14 +3144,13 @@
 
         if (data?.user) {
 
-await ensureMemberProfile({
-  ...data.user,
-  user_metadata: {
-    ...(data.user.user_metadata || {}),
-    name,
-    age_group: ageGroup
-  }
-}, ageGroup)
+          await ensureMemberProfile({
+
+            ...data.user,
+
+            user_metadata: { ...(data.user.user_metadata || {}), name }
+
+          })
 
         }
 
@@ -3128,6 +3169,8 @@ await ensureMemberProfile({
         await handlePendingScanAfterAuth()
 
       } catch (err) {
+
+        pendingRegistrationProfile = null
 
         console.error(err)
 
@@ -3273,7 +3316,16 @@ async function init() {
     db.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         setTimeout(async () => {
-          await ensureMemberProfile(session.user)
+          const pendingProfile =
+            pendingRegistrationProfile && pendingRegistrationProfile.email === session.user.email
+              ? pendingRegistrationProfile
+              : null
+
+          await ensureMemberProfile(
+            session.user,
+            pendingProfile?.age_group || null,
+            pendingProfile?.name || null
+          )
 
           renderNavUser()
           renderMemberBox()
