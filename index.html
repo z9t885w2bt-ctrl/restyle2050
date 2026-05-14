@@ -3102,13 +3102,14 @@
 
         if (data?.user) {
 
-          await ensureMemberProfile({
-
-            ...data.user,
-
-            user_metadata: { ...(data.user.user_metadata || {}), name }
-
-          })
+await ensureMemberProfile({
+  ...data.user,
+  user_metadata: {
+    ...(data.user.user_metadata || {}),
+    name,
+    age_group: ageGroup
+  }
+}, ageGroup)
 
         }
 
